@@ -15,8 +15,8 @@ See demo.py for a good example (works best in a dos prompt), keys are 0-9, UDLR 
 
   language files wanted!
 
-  If someone running Linux could rip me the full expanded ispell
-  wordlists I'd be very grateful!
+  EN-GB: Downloaded from the web, derived from gnu aspell (iirc)
+  NL-DU: Thanks to Breght Boschker for submitting these :)
 
 
 To make your own dictionary, have a read of makePy9.py. 
