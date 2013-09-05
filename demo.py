@@ -1,6 +1,16 @@
+#!/usr/bin/python
+
 import py9, msvcrt, time, os.path
 
-if not os.path.isfile("wordlists/en-gb"):
+try:
+    from msvcrt import getche
+except ImportException:
+    try:
+        from getch import getche
+    except ImportException:
+        raise ImportException("Need a source for getche, try 'apt-get install python-getch'")
+
+if not os.path.isfile("wordlists/en-gb.words"):
     print "creating dictionary (1 time only)"
     print "loads of ram required (130mb+)"
     import makepy9
@@ -13,23 +23,14 @@ print x.gettext()
 print "? [0-9/UDLR/S/Q] >",
 while i != "Q":
     time.sleep(0.05)
-    i = msvcrt.getche()
-    if i == "ÿ":
+    i = getche()
+    if ord(i) == 255:
         i = raw_input(">")
     
     if i < "~" :
         i = i.upper()
         x.sendkeys(i)
-        print
-        print
-        print
-        print
-        print
-        print
-        print
-        print
-        print
-        print
+        print "\n\n\n\n\n\n\n\n\n"
         print x.showmode(), "---", x.showkeys()
         print
         print x.gettext()

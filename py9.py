@@ -5,8 +5,8 @@
 import struct, os, string, time
 
 # key->letter mapping constants (must be same as dict, [1] is any other char)
-allkeys = [" ",".,!?\"'():;=+-/@|£$%*<>[]\\^_{}~#","ABC¿¬ƒ≈¡∆ﬂ«","DEF–»… ",
-           "GHIŒœÕ","JKL","MNO”÷‘ÿ—","PQRS","TUV⁄‹","WXYZ›"]
+allkeys = [" ",".,!?\"'():;=+-/@|¬£$%*<>[]\\^_{}~#","ABC√Ä√Ç√Ñ√Ö√Å√Ü√ü√á","DEF√ê√à√â√ä",
+           "GHI√é√è√ç","JKL","MNO√ì√ñ√î√ò√ë","PQRS","TUV√ö√ú","WXYZ√ù"]
 
 DEBUG = 4
 

@@ -1,5 +1,7 @@
+#!/usr/bin/python
+
 """
-    Py9.py - a python Nokia "T9" style predictive text dictionary
+    Py9.py - a predictive text dictionary in the style of Nokia's T9
 
     File Format...
       Header:
@@ -9,16 +11,12 @@
         
       Node block:
         Unsigned Long[4] = 
-        
-    
-    bitplane@hotpop.com
 """
 
 import string, struct
 
 class Py9Key:
-    """
-        Nodes for creating a browsable dictionary in memory (heavy!)
+    """Nodes for creating a browsable dictionary in memory (heavy!)
     """
     def __init__(self):
         self.refs = [None,None,None,None,None,None,None,None,None]
@@ -92,21 +90,21 @@ def str2digits(strWord):
     for c in strWord:
         d = string.upper(c)
         
-        if  "ABC¿¬ƒ≈¡∆ﬂ«".find(d)   != -1:
+        if  "ABC√Ä√Ç√Ñ√Ö√Å√Ü√ü√á".find(d)   != -1:
             r = r + "2"
-        elif "DEF–»… ".find(d)      != -1:
+        elif "DEF√ê√à√â√ä".find(d)      != -1:
             r = r + "3"
-        elif "GHIŒœÕ".find(d)       != -1:
+        elif "GHI√é√è√ç".find(d)       != -1:
             r = r + "4"
         elif "JKL".find(d)          != -1:
             r = r + "5"
-        elif "MNO”÷‘ÿ—".find(d)     != -1:
+        elif "MNO√ì√ñ√î√ò√ë".find(d)     != -1:
             r = r + "6"
         elif "PQRS".find(d)         != -1:
             r = r + "7"
-        elif "TUV⁄‹".find(d)        != -1:
+        elif "TUV√ö√ú".find(d)        != -1:
             r = r + "8"
-        elif "WXYZ›".find(d)        != -1:
+        elif "WXYZ√ù".find(d)        != -1:
             r = r + "9"
         elif d == " ":
             r = r + "0"
