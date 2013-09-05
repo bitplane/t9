@@ -1,8 +1,13 @@
-python "T9" style dictionary for python, v0.1
-for use with xbox media center and chat programs - chat via the remote!
+This is a T9 implementation that I wrote a long, long time ago for XBMC
+so chat programs could chat via the remote like I could on my Nokia 
+phone.
 
-gaz@bitplane.net
+That time has long passed, but the other day I was annoyed with how
+annoying it is to enter text on my Samsung Smart TV. They're still using
+an alphabetical keyboard, the remote doesn't have letters on it.
 
+Anyway I decided to polish this a bit, remove the Windowsisms and make 
+it work on Linux. Maybe someone will find some use for it.
 
 ------------------------------------------------------------------------
 
