@@ -1,13 +1,11 @@
-# -*- coding: cp1252 -*-
-
 import py9, msvcrt, time, os.path
 
-if not os.path.isfile("EN-BR.dict"):
+if not os.path.isfile("wordlists/en-gb"):
     print "creating dictionary (1 time only)"
     print "loads of ram required (130mb+)"
     import makepy9
 
-x = py9.Py9Input("EN-BR.dict","any old chunk of text that's worth editing I spose")
+x = py9.Py9Input("en-gb.dict","any old chunk of text that's worth editing I spose")
 
 i = ""
 print x.showmode(), "---", x.showkeys()

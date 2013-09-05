@@ -1,4 +1,3 @@
-# -*- coding: cp1252 -*-
 """
     Python T9 style dictionary by Bitplane feedback@bitplane.net
 """
@@ -811,3 +810,4 @@ def getkey(strWord):
                 dig = str(n)
         r = r + dig
     return r
+

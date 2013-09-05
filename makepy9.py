@@ -1,4 +1,3 @@
-# -*- coding: cp1252 -*-
 """
     Py9.py - a python Nokia "T9" style predictive text dictionary
 
@@ -116,4 +115,4 @@ def str2digits(strWord):
     return r
 
 
-r = makedict("EN-BR.WORDS.TXT","EN-BR.dict","English (British)","Bitplane's test language file")
+r = makedict("wordlists/en-gb.words","en-gb.dict","English (British)","Bitplane's test language file")
