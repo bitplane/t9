@@ -1,14 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import py9, msvcrt, time, os.path
+import py9, time, os.path
 
 try:
     from msvcrt import getche
-except ImportException:
+except ImportError:
     try:
         from getch import getche
-    except ImportException:
-        raise ImportException("Need a source for getche, try 'apt-get install python-getch'")
+    except ImportError:
+        raise ImportError("Need a source for getche, try 'apt-get install python-getch'")
 
 if not os.path.isfile("wordlists/en-gb.words"):
     print "creating dictionary (1 time only)"

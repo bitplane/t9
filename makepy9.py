@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 
 """
     Py9.py - a predictive text dictionary in the style of Nokia's T9
@@ -36,15 +37,15 @@ class Py9Key:
         for i in range(1,10):
             if self.refs[i-1] != None:
                 flags = 2 ** i | flags
-        f.write(struct.pack("h",flags))
+        f.write(struct.pack("!h",flags))
         
         # write positions of children (4 bytes each)
         for i in self.refs:
             if i:
-                f.write(struct.pack("i",i.fpos))
+                f.write(struct.pack("!i",i.fpos))
         
         # write number of words
-        f.write( struct.pack("h",len(self.words)))
+        f.write( struct.pack("!h",len(self.words)))
         
         # write list of words
         if len(self.words) > 0:
@@ -73,11 +74,11 @@ def makedict(strIn,strOut,language="Unknown",comment=""):
     f.close()
 
     f = open(strOut,"wb")
-    f.write("PY9DICT:" + struct.pack("LL",0,0))
+    f.write("PY9DICT:" + struct.pack("!LL",0,0))
     f.writelines([language,"\x0a",comment,"\x0a"])
     root.save(f)
     f.seek(0)
-    f.write("PY9DICT:" + struct.pack("LL",count,root.fpos))    
+    f.write("PY9DICT:" + struct.pack("!LL",count,root.fpos))    
     f.close()
     
 
@@ -113,4 +114,7 @@ def str2digits(strWord):
     return r
 
 
-r = makedict("wordlists/en-gb.words","en-gb.dict","English (British)","Bitplane's test language file")
+r = makedict("wordlists/en-gb.words",
+             "en-gb.dict",
+             "English (British)",
+             "Bitplane's test language file")

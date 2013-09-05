@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 """
     Python T9 style dictionary by Bitplane feedback@bitplane.net
 """
@@ -5,10 +8,18 @@
 import struct, os, string, time
 
 # key->letter mapping constants (must be same as dict, [1] is any other char)
-allkeys = [" ",".,!?\"'():;=+-/@|£$%*<>[]\\^_{}~#","ABCÀÂÄÅÁÆßÇ","DEFÐÈÉÊ",
-           "GHIÎÏÍ","JKL","MNOÓÖÔØÑ","PQRS","TUVÚÜ","WXYZÝ"]
+allkeys = [" ", 
+           ".,!?\"'():;=+-/@|£$%*<>[]\\^_{}~#",
+           "ABCÀÂÄÅÁÆßÇ",
+           "DEFÐÈÉÊ",
+           "GHIÎÏÍ",
+           "JKL",
+           "MNOÓÖÔØÑ",
+           "PQRS",
+           "TUVÚÜ",
+           "WXYZÝ"]
 
-DEBUG = 4
+DEBUG = 400
 
 class Py9Key:
     """
@@ -39,15 +50,15 @@ class Py9Key:
         for i in range(1,10):
             if self.refs[i-1] != None:
                 flags = 2 ** i | flags
-        f.write(struct.pack("h",flags))
+        f.write(struct.pack("!h",flags))
         
         # write positions of children (4 bytes each)
         for i in self.refs:
             if i:
-                f.write(struct.pack("i",i.fpos))
+                f.write(struct.pack("!i",i.fpos))
         
         # write number of words
-        f.write(struct.pack("h",len(self.words)))
+        f.write(struct.pack("!h",len(self.words)))
         
         # write list of words
         if len(self.words) > 0:
@@ -68,19 +79,19 @@ class Py9Key:
             if self.refs[i-1] != None:
                 flags = 2 ** i | flags
         if DEBUG > 5: print "writing flags", self.words, flags, self.refs
-        f.write(struct.pack("h",flags))
+        f.write(struct.pack("!h",flags))
         
         # write positions of children (4 bytes each)
         if DEBUG > 5: print "saving children",
         for i in self.refs:
             if i:
                 if DEBUG > 5: print i,
-                f.write(struct.pack("i",i))
+                f.write(struct.pack("!i",i))
 
         if DEBUG > 5: print "..."
         
         # write number of words
-        f.write( struct.pack("h",len(self.words)))
+        f.write( struct.pack("!h",len(self.words)))
         
         # write list of words
         if len(self.words) > 0:
@@ -94,17 +105,17 @@ class Py9Key:
         """
         self.fpos = f.tell()
         # read flags (2 bytes)
-        flags, = struct.unpack("h",f.read(2))
+        flags, = struct.unpack("!h",f.read(2))
         c = 0
         # loop through flags
         for i in range(1,10):
             if 2 ** i & flags != 0:
                 f.seek(self.fpos + 2 + c * 4)
                 c += 1
-                self.refs[i-1], = struct.unpack("L",f.read(4))
+                self.refs[i-1], = struct.unpack("!L",f.read(4))
 
         # read word count
-        wc, = struct.unpack("h",f.read(2))
+        wc, = struct.unpack("!h",f.read(2))
         self.words = []
         for n in range(0,wc):
             self.words.append(f.readline()[:-1])
@@ -127,7 +138,7 @@ class Py9Dict:
         self.file = strDict
         f = open(strDict,"rb")
         f.seek(8)
-        self.wordcount, self.rootpos = struct.unpack("LL",f.read(8))
+        self.wordcount, self.rootpos = struct.unpack("!LL", f.read(8))
         self.language = f.readline()[:-1]
         self.comment  = f.readline()[:-1]
         f.close()
@@ -317,7 +328,7 @@ class Py9Dict:
         self.wordcount += 1
         f = open(self.file,"r+b")
         f.seek(8)
-        f.write(struct.pack("LL",self.wordcount,self.rootpos))
+        f.write(struct.pack("!LL",self.wordcount,self.rootpos))
         f.close()
         if DEBUG > 5: print "root:", self.rootpos
         del nodes
