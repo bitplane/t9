@@ -52,9 +52,6 @@ class Py9Key:
             for l in self.words:
                 f.write("%s\n" % l)
 
-#    def load(self,f):
-#        for i in self.refs:
-
 def makedict(strIn,strOut,language="Unknown",comment=""):
     root = Py9Key()
     count = 0L
@@ -78,39 +75,34 @@ def makedict(strIn,strOut,language="Unknown",comment=""):
     f.writelines([language,"\x0a",comment,"\x0a"])
     root.save(f)
     f.seek(0)
-    f.write("PY9DICT:" + struct.pack("!LL",count,root.fpos))    
+    f.write("PY9DICT:" + struct.pack("!LL",count,root.fpos))
     f.close()
-    
 
 def str2digits(strWord):
     """
         str2digits(string) -> string of digits
         Converts a word to keypresses
     """
+    def chr2digit(c):
+        for d, s in (('2', 'ABCÀÂÄÅÁÆßÇ'),
+                     ('3', 'DEFÐÈÉÊ'),
+                     ('4', 'GHIÎÏÍ'),
+                     ('5', 'JKL'),
+                     ('6', 'MNOÓÖÔØÑ'),
+                     ('7', 'PQRS'),
+                     ('8', 'TUVÚÜ'),
+                     ('9', 'WXYZÝ'),
+                     ('0', ' ')):
+            if c in s:
+                return d
+        # Symbols live here!
+        return '1'
+
+
     r = ""
     for c in strWord:
         d = string.upper(c)
-        
-        if  "ABCÀÂÄÅÁÆßÇ".find(d)   != -1:
-            r = r + "2"
-        elif "DEFÐÈÉÊ".find(d)      != -1:
-            r = r + "3"
-        elif "GHIÎÏÍ".find(d)       != -1:
-            r = r + "4"
-        elif "JKL".find(d)          != -1:
-            r = r + "5"
-        elif "MNOÓÖÔØÑ".find(d)     != -1:
-            r = r + "6"
-        elif "PQRS".find(d)         != -1:
-            r = r + "7"
-        elif "TUVÚÜ".find(d)        != -1:
-            r = r + "8"
-        elif "WXYZÝ".find(d)        != -1:
-            r = r + "9"
-        elif d == " ":
-            r = r + "0"
-        else:
-            r = r + "1"
+        r = r + chr2digit(d)
     return r
 
 
