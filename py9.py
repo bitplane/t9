@@ -22,8 +22,7 @@ allkeys = [" ",
 DEBUG = 4
 
 class Py9Key:
-    """
-        for file access to keypress dictionary
+    """For file access to keypress dictionary
     """
     def __init__(self):
         self.refs = [None,None,None,None,None,None,None,None,None]
@@ -33,10 +32,9 @@ class Py9Key:
         self.needsave = False
         self.last = -1
 
-    def save(self,f):
-        """
-            saves node and all child nodes to the file f
-            used when creating dictionary file. 
+    def save(self, f):
+        """Saves the node and all child nodes to the file f.
+           Used when creating dictionary file. 
         """
         # recurse save children first so self.ref[x].fpos is always set
         for i in self.refs:
@@ -65,10 +63,9 @@ class Py9Key:
             for l in self.words:
                 f.write("%s\n" % l)
 
-    def savenode(self,f):
-        """
-            just saves this node to the file
-            used to add or overwrite a node
+    def savenode(self, f):
+        """Just saves this node to the file.
+           Used to add or overwrite a node.
         """
         # get position in file
         self.fpos = f.tell()
@@ -99,9 +96,8 @@ class Py9Key:
                 f.write("%s\n" % l)
 
 
-    def loadnode(self,f):
-        """
-            loads a node from an open file object
+    def loadnode(self, f):
+        """Loads a node from an open file object
         """
         self.fpos = f.tell()
         # read flags (2 bytes)
@@ -125,15 +121,13 @@ class Py9Key:
 
 class Py9Dict:
     def __init__(self, strDict):
-        """
-            creates the Py9 dictionary class
-                loads file header info:
+        """Creates the Py9 dictionary class
+               loads file header info:
 
-                word count     L   (==4)
-                root node pos  L   (==4)
-                language       STR (>=1)
-                comment        STR (>=1)
-                
+               word count     L   (==4)
+               root node pos  L   (==4)
+               language       STR (>=1)
+               comment        STR (>=1)
         """
         self.file = strDict
         f = open(strDict,"rb")
@@ -143,19 +137,18 @@ class Py9Dict:
         self.comment  = f.readline()[:-1]
         f.close()
 
-    def getwords(self,strDigits):
-        """
-            returns [], or list of possible words
-                len(getwords(s)[0]) = len(s):
-                    node was found, contained words
+    def getwords(self, strDigits):
+        """returns [], or list of possible words
+               len(getwords(s)[0]) = len(s):
+                   node was found, contained words
                 
-                len(getwords(s)[0]) > len(s):
-                    node found, no words found.
-                    look ahead was used to return single word
+               len(getwords(s)[0]) > len(s):
+                   node found, no words found.
+                   look ahead was used to return single word
                     
-                len(getwords(s)[0]) < len(s):
-                    node not found.
-                    look behind was used to return single word
+               len(getwords(s)[0]) < len(s):
+                   node not found.
+                   look behind was used to return single word
         """
         
         f = open(self.file,"rb")
@@ -166,7 +159,6 @@ class Py9Dict:
         # process each digit
         
         for c in strDigits:
-            
             f.seek(p)
             k.__init__()
             k.loadnode(f)
@@ -214,14 +206,13 @@ class Py9Dict:
         else:
             return k.words
 
-    def addword(self,word):
-        """
-            adds the given word to the current dictionary
-            must not exist or raises KeyError
+    def addword(self, word):
+        """Adds the given word to the current dictionary.
+           The word must not exist or KeyError is raised
         """
 
         # messy code, bitch to debug
-        
+
         if DEBUG > 5: print "root:", self.rootpos
         key  = getkey(word)
 
@@ -333,39 +324,36 @@ class Py9Dict:
         if DEBUG > 5: print "root:", self.rootpos
         del nodes
         
-    def test(self,word):
+    def test(self, word):
         print self.getwords(getkey(word))
                 
 
-    def delword(self,word):
+    def delword(self, word):
         """
             deletes the given word from the dictionary
             must exist or raises exception
         """
         print "Py9Dict.delword() NOT IMPLEMENTED"
-
+        raise NotImplementedError
 
 class Py9Input:
-    """
-        The input parser.
-        Handles keypresses from the user and manipulates the text.
+    """The input parser.
+       Handles keypresses from the user and manipulates the text.
         
-        Send keypresses to this control with sendkeys(), retrieve
-        it's input for display with gettext() (includes cursor,
-        to get the raw text use text)
-        
+       Send keypresses to this control with sendkeys(), retrieve
+       it's input for display with gettext() (includes cursor,
+       to get the raw text use text)
     """
-    def __init__(self,dict,defaulttxt="",defaultmode=0,
-                 keydelay=0.5,numeric=False):
-        """
-            create a new input parser
+    def __init__(self, dict, defaulttxt="", defaultmode=0,
+                 keydelay=0.5, numeric=False):
+        """Create a new input parser
             
-            dict        = dictionary file name
-            defaulttxt  = text to start with
-            defaultmode = mode to start in
+           dict        = dictionary file name
+           defaulttxt  = text to start with
+           defaultmode = mode to start in
                           0=Predictive, 3=TXT lower, 4=TXT upper, 5=Numeric)
-            keydelay    = key timeout in TXT mode
-            numeric     = NOT IMPLEMENTED YET
+           keydelay    = key timeout in TXT mode
+           numeric     = NOT IMPLEMENTED YET
         """
         self.dict         = Py9Dict(dict)  # dict for lookups
         self.modes        = ["Abc...","[Abc]","[a..]","abc","ABC","123"]
@@ -391,29 +379,25 @@ class Py9Input:
         self.keydelay     = keydelay       # time to chang char (txt input)
         self.numeric      = numeric        # True if this is numbers only 
 
-    def getkey(self,strWord):
-        """
-            returns a string of the keystrokes required to type strWord
-            (py9.getkey alias for calling from outside)
+    def getkey(self, strWord):
+        """Returns a string of the keystrokes required to type strWord
+           (py9.getkey alias for calling from outside)
         """
         return getkey(strWord)
 
     def showmode(self):
-        """
-            returns a text logo for current input mode
+        """Returns a text logo for current input mode
         """
         return self.modes[self.mode]
     
     def showkeys(self):
-        """
-            returns a string telling the user what keys do what
+        """Returns a string telling the user what keys do what
         """
         return self.modekeys[self.mode]
 
     def gettext(self):
-        """
-            returns the current text in the control including the cursor
-            for raw text use x.text()
+        """Returns the current text in the control including the cursor
+           for raw text use x.text()
         """
         if self.mode == 0:
             return self.textbefore + "|" + self.textafter
@@ -427,9 +411,9 @@ class Py9Input:
             return self.textbefore + "[]" + self.textafter
         elif self.mode == 5:
             return self.textbefore + "#" + self.textafter
+
     def text(self):
-        """
-            returns the control's text without cursor 
+        """Returns the text buffer (without cursor) 
         """
         if self.mode == 2 or self.mode == 1:
             return self.textbefore + self.word + self.textafter
@@ -437,16 +421,14 @@ class Py9Input:
             return self.textbefore + self.textafter
 
     def posword(self):
-        """
-            returns the word with position marker set
+        """Returns the word with position marker set
         """
         return "%s|%c|%s" % (self.word[0:self.pos],
                              self.word[self.pos],
                              self.word[self.pos+1:len(self.word)])
 
     def setword(self):
-        """
-            changes the current word to the first valid one
+        """Changes the current word to the first valid one
         """
 
         if len(self.keys) == 0:
@@ -476,12 +458,10 @@ class Py9Input:
                 self.mode = 2
 
     def nextword(self):
-        """
-            in edit mode 1, moves to the next word if possible
+        """In edit mode 1, moves to the next word if possible
         """
 
         if self.word in self.words:
-
             # enter manual edit if we run out of words
             i = self.words.index(self.word)
             if i == len(self.words)-1:
@@ -495,8 +475,7 @@ class Py9Input:
             self.setword()
         
     def nextchar(self):
-        """
-            in edit mode 2, selects the next letter in the group
+        """In edit mode 2, selects the next letter in the group
         """
         c   = self.word[self.pos]
         lc  = c == c.lower()
@@ -515,8 +494,9 @@ class Py9Input:
         self.word = "%s%c%s" % (self.word[0:self.pos], c,
                                   self.word[self.pos+1:len(self.word)])
 
-
-    def addkeypress(self,key):
+    def addkeypress(self, key):
+        """
+        """
         if key == "1" and self.keys[0] != "1":
             if self.keys[-1] == "1":
                 # this is punctuation only - skip the word (no save)
@@ -533,47 +513,45 @@ class Py9Input:
             # reset text
             self.setword()
 
-    def sendkeys(self,keys):
-        """
-            sends action keys, (key = "0123456789UDLRS")
+    def sendkeys(self, keys):
+        """sends action keys, (key = "0123456789UDLRS")
             
-            UDLRS = UP, DOWN, LEFT, RIGHT, SELECT
+           UDLRS = UP, DOWN, LEFT, RIGHT, SELECT
 
-            naviagate mode:
-                0123456789 = start new word
-                ULR        = Navigate
-                D          = backspace
-                S          = LAMO TXT MODE (3)
+           naviagate mode:
+               0123456789 = start new word
+               ULR        = Navigate
+               D          = backspace
+               S          = LAMO TXT MODE (3)
             
-            edit mode (1+2):
-                0123456789 = append keystroke
+           edit mode (1+2):
+               0123456789 = append keystroke
 
 
-                complete word (mode=1):
-                    LR         = accept
-                    U          = change word
-                    D          = backspace
-                    S          = char edit mode (2)
+               complete word (mode=1):
+                   LR         = accept
+                   U          = change word
+                   D          = backspace
+                   S          = char edit mode (2)
 
-                incomplete word (mode=2):
-                    L          = back letter
-                    R          = confirm letter
-                    U          = change letter
-                    D          = delete char
-                    S          = change case
+               incomplete word (mode=2):
+                   L          = back letter
+                   R          = confirm letter
+                   U          = change letter
+                   D          = delete char
+                   S          = change case
 
-            letter mode (3+4): (upper+lower)
-                0123456789 = numbers
-                ULR        = Navigate
-                D          = backspace
-                S          = mode++ (4,5)
+           letter mode (3+4): (upper+lower)
+               0123456789 = numbers
+               ULR        = Navigate
+               D          = backspace
+               S          = mode++ (4,5)
                 
-            number mode (4):
-                0123456789 = numbers
-                ULR        = Navigate
-                D          = backspace
-                S          = navigate mode (1)
-
+           number mode (4):
+               0123456789 = numbers
+               ULR        = Navigate
+               D          = backspace
+               S          = navigate mode (1)
         """
         for key in keys:
             if self.mode == 0:
@@ -808,9 +786,8 @@ class Py9Input:
                     self.mode = 0
 
 def getkey(strWord):
-    """
-        getkey(string) -> string of digits
-        Converts a word to keypresses
+    """getkey(string) -> string of digits
+       Converts a word to keypresses
     """
     r = ""
     for c in strWord:
