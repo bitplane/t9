@@ -19,7 +19,7 @@ allkeys = [" ",
            "TUVÚÜ",
            "WXYZÝ"]
 
-DEBUG = 400
+DEBUG = 4
 
 class Py9Key:
     """
