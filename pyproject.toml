@@ -8,9 +8,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.9"
 
-dependencies = [
-    "getch"
-]
+dependencies = []
 
 [project.scripts]
 py9 = "py9.cli:main"
