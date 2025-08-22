@@ -8,24 +8,14 @@ import time
 import logging
 
 from .mode import get_label, get_help
+from .constants import ALLKEYS
+from .utils import getkey
 
 # Set up logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)  # Default to WARNING, can be changed by users
 
-# key->letter mapping constants (must be same as dict, [1] is any other char)
-allkeys = [
-    " ",
-    ".,!?\"'():;=+-/@|£$%*<>[]\\^_{}~#",
-    "ABCÀÂÄÅÁÆßÇ",
-    "DEFÐÈÉÊ",
-    "GHIÎÏÍ",
-    "JKL",
-    "MNOÓÖÔØÑ",
-    "PQRS",
-    "TUVÚÜ",
-    "WXYZÝ",
-]
+# Constants moved to constants.py
 
 # DEBUG constant removed - use logging instead
 
@@ -472,14 +462,14 @@ class Py9Input:
         lc = c == c.lower()
         c = c.upper()
         key = int(self.keys[self.pos])
-        if c not in allkeys[key]:
-            c = allkeys[key][0]
+        if c not in ALLKEYS[key]:
+            c = ALLKEYS[key][0]
         else:
-            i = allkeys[key].find(c) + 1
-            if i < len(allkeys[key]):
-                c = allkeys[key][i]
+            i = ALLKEYS[key].find(c) + 1
+            if i < len(ALLKEYS[key]):
+                c = ALLKEYS[key][i]
             else:
-                c = allkeys[key][0]
+                c = ALLKEYS[key][0]
         if lc:
             c = c.lower()
         self.word = "%s%c%s" % (self.word[0 : self.pos], c, self.word[self.pos + 1 : len(self.word)])
@@ -691,7 +681,7 @@ class Py9Input:
                             self.pos -= 1
                     elif key == "R":
                         # move forward one char
-                        k = allkeys[int(self.keys[self.pos])]
+                        k = ALLKEYS[int(self.keys[self.pos])]
                         if self.word[self.pos].upper() in k:
                             if self.pos == len(self.word) - 1:
                                 # save this word?
@@ -710,13 +700,13 @@ class Py9Input:
                     if self.lastkeytime + self.keydelay > time.perf_counter() and key == self.lastkeypress:
                         # edit char
                         c = self.textbefore[-1].upper()
-                        print(allkeys[int(key)].find(c), int(key), allkeys[int(key)], c)
-                        i = allkeys[int(key)].find(c)
+                        print(ALLKEYS[int(key)].find(c), int(key), ALLKEYS[int(key)], c)
+                        i = ALLKEYS[int(key)].find(c)
                         if i != -1:
-                            if i == len(allkeys[int(key)]) - 1:
-                                c = allkeys[int(key)][0]
+                            if i == len(ALLKEYS[int(key)]) - 1:
+                                c = ALLKEYS[int(key)][0]
                             else:
-                                c = allkeys[int(key)][i + 1]
+                                c = ALLKEYS[int(key)][i + 1]
                             print(self.mode)
                             if self.mode == 3:
                                 # lower case in mode 4
@@ -726,7 +716,7 @@ class Py9Input:
 
                     else:
                         # new char
-                        c = allkeys[int(key)][0]
+                        c = ALLKEYS[int(key)][0]
                         if self.mode == 3:
                             # lower case in mode 4
                             c = c.lower()
@@ -775,16 +765,4 @@ class Py9Input:
                     self.mode = 0
 
 
-def getkey(strWord):
-    """getkey(string) -> string of digits
-    Converts a word to keypresses
-    """
-    r = ""
-    for c in strWord:
-        d = c.upper()
-        dig = "1"
-        for n in range(0, len(allkeys)):
-            if allkeys[n].find(d) != -1:
-                dig = str(n)
-        r = r + dig
-    return r
+# getkey function moved to utils.py

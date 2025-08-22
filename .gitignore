@@ -5,3 +5,5 @@ htmlcov
 dist
 coverage.json
 site
+todo.md
+docs/pydoc
