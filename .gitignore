@@ -7,3 +7,4 @@ coverage.json
 site
 todo.md
 docs/pydoc
+*.dict

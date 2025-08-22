@@ -12,7 +12,6 @@ File Format...
     Unsigned Long[4] =
 """
 
-import string
 import struct
 
 
@@ -51,7 +50,7 @@ class Py9Key:
 
         # write list of words
         for word in self.words:
-            f.write("%s\n" % word)
+            f.write(("%s\n" % word).encode("utf-8"))
 
 
 def makedict(strIn, strOut, language="Unknown", comment=""):
@@ -73,11 +72,11 @@ def makedict(strIn, strOut, language="Unknown", comment=""):
     f.close()
 
     f = open(strOut, "wb")
-    f.write("PY9DICT:" + struct.pack("!LL", 0, 0))
-    f.writelines([language, "\x0a", comment, "\x0a"])
+    f.write(b"PY9DICT:" + struct.pack("!LL", 0, 0))
+    f.write(language.encode("utf-8") + b"\x0a" + comment.encode("utf-8") + b"\x0a")
     root.save(f)
     f.seek(0)
-    f.write("PY9DICT:" + struct.pack("!LL", count, root.fpos))
+    f.write(b"PY9DICT:" + struct.pack("!LL", count, root.fpos))
     f.close()
 
 
@@ -106,7 +105,7 @@ def str2digits(strWord):
 
     r = ""
     for c in strWord:
-        d = string.upper(c)
+        d = c.upper()
         r = r + chr2digit(d)
     return r
 
