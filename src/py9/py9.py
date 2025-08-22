@@ -27,7 +27,7 @@ class Py9Key:
     def __init__(self):
         self.refs = [None,None,None,None,None,None,None,None,None]
         self.words = []
-        self.fpos = 0L
+        self.fpos = 0
         
         self.needsave = False
         self.last = -1
@@ -61,7 +61,7 @@ class Py9Key:
         # write list of words
         if len(self.words) > 0:
             for l in self.words:
-                f.write("%s\n" % l)
+                f.write(("%s\n" % l).encode('utf-8'))
 
     def savenode(self, f):
         """Just saves this node to the file.
@@ -75,17 +75,22 @@ class Py9Key:
         for i in range(1,10):
             if self.refs[i-1] != None:
                 flags = 2 ** i | flags
-        if DEBUG > 5: print "writing flags", self.words, flags, self.refs
+        if DEBUG > 5:
+            print("writing flags", self.words, flags, self.refs)
+
         f.write(struct.pack("!h",flags))
         
         # write positions of children (4 bytes each)
-        if DEBUG > 5: print "saving children",
+        if DEBUG > 5: 
+            print("saving children")
         for i in self.refs:
             if i:
-                if DEBUG > 5: print i,
+                if DEBUG > 5:
+                    print(i)
                 f.write(struct.pack("!i",i))
 
-        if DEBUG > 5: print "..."
+        if DEBUG > 5: 
+            print("...")
         
         # write number of words
         f.write( struct.pack("!h",len(self.words)))
@@ -93,7 +98,7 @@ class Py9Key:
         # write list of words
         if len(self.words) > 0:
             for l in self.words:
-                f.write("%s\n" % l)
+                f.write(("%s\n" % l).encode('utf-8'))
 
 
     def loadnode(self, f):
@@ -114,9 +119,10 @@ class Py9Key:
         wc, = struct.unpack("!h",f.read(2))
         self.words = []
         for n in range(0,wc):
-            self.words.append(f.readline()[:-1])
+            self.words.append(f.readline().decode('utf-8')[:-1])
 
-        if DEBUG > 5: print "***load***",self.refs,self.words
+        if DEBUG > 5: 
+            print("***load***",self.refs,self.words)
         
 
 class Py9Dict:
@@ -133,8 +139,8 @@ class Py9Dict:
         f = open(strDict,"rb")
         f.seek(8)
         self.wordcount, self.rootpos = struct.unpack("!LL", f.read(8))
-        self.language = f.readline()[:-1]
-        self.comment  = f.readline()[:-1]
+        self.language = f.readline().decode('utf-8')[:-1]
+        self.comment  = f.readline().decode('utf-8')[:-1]
         f.close()
 
     def getwords(self, strDigits):
@@ -155,7 +161,9 @@ class Py9Dict:
         k = Py9Key()
         oldlist = []
         p = self.rootpos
-        if DEBUG > 5: print "root = ", p
+        if DEBUG > 5:
+            print("root = ", p)
+
         # process each digit
         
         for c in strDigits:
@@ -181,7 +189,7 @@ class Py9Dict:
         k.loadnode(f)
         if len(k.words) == 0:
             # couldn't find word
-            print strDigits
+            print(strDigits)
             if strDigits[-1] == "1":
                 f.close()
                 del k
@@ -213,7 +221,9 @@ class Py9Dict:
 
         # messy code, bitch to debug
 
-        if DEBUG > 5: print "root:", self.rootpos
+        if DEBUG > 5:
+            print("root:", self.rootpos)
+
         key  = getkey(word)
 
         f = open(self.file,"rb")
@@ -226,7 +236,8 @@ class Py9Dict:
         
         # process each digit
         for c in key:
-            if DEBUG > 5: print "node",nodes[p].last
+            if DEBUG > 5: 
+                print("node",nodes[p].last)
             
             # is it referenced?
             if nodes[p].refs[int(c)-1] != None:
@@ -243,14 +254,18 @@ class Py9Dict:
                 # node needs a save
                 nodes[p].needsave = 2
 
-            if DEBUG > 5: print "Last node: ", nodes[p-1].refs[int(key[p-1])-1]
+            if DEBUG > 5:
+                print("Last node: ", nodes[p-1].refs[int(key[p-1])-1])
+            
             if nodes[p-1].refs[int(key[p-1])-1] == None:
-                if DEBUG > 5: print "last node was new"
+                if DEBUG > 5: 
+                    print("last node was new")
                 # previous node is also new
                 nodes[p-1].needsave = 2
                 if p-2 >= 0:
                     if nodes[p-2].refs[int(key[p-2])-1] == None:
-                        if DEBUG > 5: print "ding ding"
+                        if DEBUG > 5: 
+                            print("ding ding")
                         nodes[p-2].needsave = 2
                     else:
                         nodes[p-2].needsave = 1
@@ -283,7 +298,8 @@ class Py9Dict:
         # now work from the last digit back saving each one
         for n in range(len(nodes)-1,-1,-1):
             if nodes[n].needsave == 2:
-                if DEBUG > 5: print "needs save:",n
+                if DEBUG > 5: 
+                    print("needs save:", n)
 
                 # are we moving the root node?
                 movert = self.rootpos == nodes[n].fpos                
@@ -291,41 +307,49 @@ class Py9Dict:
                 f = open(self.file,"r+b")
                 
                 f.seek(os.stat(self.file)[6])
-                if DEBUG > 5: print n, len(nodes)
+                if DEBUG > 5: 
+                    print(n, len(nodes))
                 if n < len(nodes)-1:
-                    if DEBUG > 5: print "ok... next is a ", nodes[n+1].last, "at", nodes[n+1].fpos
+                    if DEBUG > 5: 
+                        print("ok... next is a ", nodes[n+1].last, "at", nodes[n+1].fpos)
                     if nodes[n+1].last != -1:
-                        if DEBUG > 5: print "...w: new fpos for", n , "is" , nodes[n+1].fpos
+                        if DEBUG > 5: 
+                            print("...w: new fpos for", n , "is" , nodes[n+1].fpos)
                         nodes[n].refs[nodes[n+1].last] = nodes[n+1].fpos    
                 nodes[n].savenode(f)
-                if DEBUG > 5: print "...append gave me a fpos of ",nodes[n].fpos
+                if DEBUG > 5: 
+                    print("...append gave me a fpos of ",nodes[n].fpos)
                 f.close()
                 if movert:
                     self.rootpos = nodes[n].fpos
                     
             elif nodes[n].needsave == 1:
-                if DEBUG > 5: print "needs update:",n, "pos=",nodes[n].fpos
+                if DEBUG > 5: 
+                    print("needs update:", n, "pos=",nodes[n].fpos)
                 f = open(self.file,"r+b")
 
-                if DEBUG > 5: print "...u: new fpos for", n , "is" , nodes[n+1].fpos
+                if DEBUG > 5:
+                    print("...u: new fpos for", n , "is" , nodes[n+1].fpos)
                 nodes[n].refs[nodes[n+1].last] = nodes[n+1].fpos
                 
                 f.seek(nodes[n].fpos)
                 nodes[n].savenode(f)
                 f.close()
             else:
-                if DEBUG > 5: print "no edit:",n,"pos=",nodes[n].fpos
+                if DEBUG > 5:
+                    print("no edit:",n,"pos=",nodes[n].fpos)
 
         self.wordcount += 1
         f = open(self.file,"r+b")
         f.seek(8)
         f.write(struct.pack("!LL",self.wordcount,self.rootpos))
         f.close()
-        if DEBUG > 5: print "root:", self.rootpos
+        if DEBUG > 5: 
+            print("root:", self.rootpos)
         del nodes
         
     def test(self, word):
-        print self.getwords(getkey(word))
+        print(self.getwords(getkey(word)))
                 
 
     def delword(self, word):
@@ -333,7 +357,7 @@ class Py9Dict:
             deletes the given word from the dictionary
             must exist or raises exception
         """
-        print "Py9Dict.delword() NOT IMPLEMENTED"
+        print("Py9Dict.delword() NOT IMPLEMENTED")
         raise NotImplementedError
 
 class Py9Input:
@@ -375,7 +399,7 @@ class Py9Input:
         self.textbefore   = defaulttxt     # before the cursor
         self.textafter    = ""             # after the cursor
         self.lastkeypress = ""             # last key pressed   (txt input)
-        self.lastkeytime  = time.clock()   # time from last key (txt input)
+        self.lastkeytime  = time.perf_counter()   # time from last key (txt input)
         self.keydelay     = keydelay       # time to chang char (txt input)
         self.numeric      = numeric        # True if this is numbers only 
 
@@ -643,7 +667,9 @@ class Py9Input:
                         # save this word?
                         if not self.word in self.words:
                             # save it
-                            if DEBUG > 3: print "saving word: ", self.word
+                            if DEBUG > 3:
+                                print("saving word: ", self.word)
+
                             self.dict.addword(self.word)
                         
                         # return to navigate mode.
@@ -655,7 +681,8 @@ class Py9Input:
                         # save this word?
                         if not self.word in self.words:
                             # save it
-                            if DEBUG > 3: print "saving word: ", self.word
+                            if DEBUG > 3: 
+                                print("saving word: ", self.word)
                             self.dict.addword(self.word)
                             
                         # return to navigate mode.
@@ -677,7 +704,9 @@ class Py9Input:
                             
                             # save this word?
                             if not self.word in self.words:
-                                if DEBUG > 3: print "saving word: ", self.word
+                                if DEBUG > 3:
+                                    print("saving word: ", self.word)
+
                                 self.dict.addword(self.word)
                             
                             # return to navigate mode.
@@ -707,7 +736,8 @@ class Py9Input:
                             if self.pos == len(self.word)-1:
                                 # save this word?
                                 if not self.word in self.words:
-                                    if DEBUG > 3: print "saving word: ", self.word
+                                    if DEBUG > 3: 
+                                        print("saving word: ", self.word)
                                     self.dict.addword(self.word)
                                 
                                 # return to navigate mode. 
@@ -718,17 +748,17 @@ class Py9Input:
             elif self.mode < 5:
                 if key in "123456789":
                     # text entry mode 3 (boring way)
-                    if self.lastkeytime + self.keydelay > time.clock() and key == self.lastkeypress:
+                    if self.lastkeytime + self.keydelay > time.perf_counter() and key == self.lastkeypress:
                         # edit char
                         c = self.textbefore[-1].upper()
-                        print allkeys[int(key)].find(c), int(key), allkeys[int(key)],c
+                        print(allkeys[int(key)].find(c), int(key), allkeys[int(key)],c)
                         i = allkeys[int(key)].find(c)
                         if i != -1:
                             if i == len(allkeys[int(key)])-1:
                                 c = allkeys[int(key)][0]
                             else:
                                 c = allkeys[int(key)][i+1]
-                            print self.mode
+                            print(self.mode)
                             if self.mode == 3:
                                 # lower case in mode 4
                                 c = c.lower()
@@ -744,7 +774,7 @@ class Py9Input:
                         self.textbefore += c
 
                     self.lastkeypress = key
-                    self.lastkeytime  = time.clock()
+                    self.lastkeytime  = time.perf_counter()
                 else:
                     self.lastkeytime  = 0
                 
