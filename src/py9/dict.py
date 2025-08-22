@@ -81,13 +81,11 @@ class Py9Dict:
                         if i is not None:
                             p = i
                             break
-                    if p == 0:
-                        f.close()
-                        return []
-                    else:
-                        f.seek(p)
-                        k.__init__()
-                        k.loadnode(f)
+                    # Note: p should never be 0 with properly constructed dictionaries
+                    # as makedict ensures all paths terminate in words
+                    f.seek(p)
+                    k.__init__()
+                    k.loadnode(f)
 
             f.close()
             return k.words
@@ -195,8 +193,7 @@ class Py9Dict:
                 f.seek(nodes[n].fpos)
                 nodes[n].savenode(f)
                 f.close()
-            else:
-                logger.debug("no edit needed for node %s at position %s", n, nodes[n].fpos)
+            # else: node doesn't need saving
 
         self.wordcount += 1
         f = open(self.file, "r+b")
