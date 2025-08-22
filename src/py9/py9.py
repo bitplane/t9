@@ -1,10 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- 
-
 """
     Python T9 style dictionary by Bitplane feedback@bitplane.net
 """
-
 import struct, os, string, time
 
 # key->letter mapping constants (must be same as dict, [1] is any other char)
