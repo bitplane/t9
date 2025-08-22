@@ -8,9 +8,9 @@ from . import makepy9
 from .demo import run_demo as demo_function
 
 
-def run_demo():
+def run_demo(dict_file=None):
     """Run the T9 demo application."""
-    return demo_function()
+    return demo_function(dict_file)
 
 
 def generate_dict(wordlist, output, language="Unknown", comment=""):
@@ -51,7 +51,8 @@ def main():
     gen_parser.add_argument("-c", "--comment", default="", help="Comment for dictionary metadata")
 
     # Demo command
-    subparsers.add_parser("demo", help="Run T9 demo application")
+    demo_parser = subparsers.add_parser("demo", help="Run T9 demo application")
+    demo_parser.add_argument("dictionary", nargs="?", help="Path to dictionary file (optional)")
 
     args = parser.parse_args()
 
@@ -63,7 +64,7 @@ def main():
     if args.command in ("generate", "gen"):
         return generate_dict(args.wordlist, args.output, args.language, args.comment)
     elif args.command == "demo":
-        return run_demo()
+        return run_demo(args.dictionary)
 
     return 0
 

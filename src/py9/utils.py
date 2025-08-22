@@ -1,5 +1,6 @@
 """Utility functions for PY9 T9 text input system."""
 
+from pathlib import Path
 from .constants import ALLKEYS
 
 
@@ -25,3 +26,8 @@ def getkey(word):
 def str2digits(word):
     """Convert a word to T9 keypress sequence (alias for getkey)."""
     return getkey(word)
+
+
+def get_wordlists_dir():
+    """Get the path to the wordlists directory."""
+    return Path(__file__).parent / "wordlists"

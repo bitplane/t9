@@ -80,7 +80,7 @@ def makedict(strIn, strOut, language="Unknown", comment=""):
     f.close()
 
 
-def str2digits(strWord):
+def str2digits(word):
     """
     str2digits(string) -> string of digits
     Converts a word to keypresses
@@ -104,13 +104,7 @@ def str2digits(strWord):
         return "1"
 
     r = ""
-    for c in strWord:
+    for c in word:
         d = c.upper()
         r = r + chr2digit(d)
     return r
-
-
-# r = makedict("wordlists/en-gb.words",
-#             "en-gb.dict",
-#             "English (British)",
-#             "Bitplane's test language file")
