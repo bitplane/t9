@@ -29,6 +29,9 @@ time you run it, after it's made the DB it'll need hardly any.
 To make your own dictionary, have a read of makepy9.py.
 Keep your wordlists though - the file format might change in future.
 
+## 🔗 Links
 
-
-
+* [🏠 home](https://bitplane.net/dev/python/t9)
+  * [📖 pydoc](https://bitplane.net/dev/python/t9/pydoc)
+* [😺 github](https://github.com/bitplane/t9)
+* [🐍 pypi](https://pypi.org/project/t9)
