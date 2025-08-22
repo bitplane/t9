@@ -1,3 +1,5 @@
+# ☎️ py9
+
 This is a T9 implementation that I wrote a long, long time ago for XBMC
 so chat programs could chat via the remote like I could on my Nokia
 phone.
@@ -24,7 +26,7 @@ time you run it, after it's made the DB it'll need hardly any.
   EN-GB: Downloaded from the web, derived from gnu aspell (iirc)
   NL-DU: Thanks to Breght Boschker for submitting these :)
 
-To make your own dictionary, have a read of makePy9.py.
+To make your own dictionary, have a read of makepy9.py.
 Keep your wordlists though - the file format might change in future.
 
 
