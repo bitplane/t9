@@ -1,4 +1,7 @@
-*~
-*.pyc
-*.cover
-*.dict
+.venv
+__pycache__
+.coverage
+htmlcov
+dist
+coverage.json
+site
