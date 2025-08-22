@@ -6,6 +6,8 @@ import struct
 import os
 import time
 
+from .mode import InputMode, get_label, get_help
+
 # key->letter mapping constants (must be same as dict, [1] is any other char)
 allkeys = [
     " ",
@@ -378,15 +380,6 @@ class Py9Input:
         numeric     = NOT IMPLEMENTED YET
         """
         self.dict = Py9Dict(dict)  # dict for lookups
-        self.modes = ["Abc...", "[Abc]", "[a..]", "abc", "ABC", "123"]
-        self.modekeys = [
-            "0=Space, 1-9=Abc..., D=DEL, ULR=Navigate, S:abc",
-            "0=Save/Space, 1-9=[Abc], D=DEL, U=Change, LR=Navigate, S:123",
-            "0=Save/Reset, 1-9=[a..], D=DEL, U=Change, LR=Navigate/Save, S:[A..]",
-            "0=Space, 1-9=abc, D=DEL, ULR=Navigate, S:Abc...",
-            "0-Space, 1-9=ABC, D=DEL, ULR=Navigate, S:123",
-            "0-9=123, D=DEL, ULR=Navigate, S:Abc...",
-        ]
         self.mode = defaultmode  # 0=navigate,1=edit word
         # 2=edit chars,3=lcase txt
         # 4=ucase txt,5=numbers
@@ -409,11 +402,11 @@ class Py9Input:
 
     def showmode(self):
         """Returns a text logo for current input mode"""
-        return self.modes[self.mode]
+        return get_label(self.mode)
 
     def showkeys(self):
         """Returns a string telling the user what keys do what"""
-        return self.modekeys[self.mode]
+        return get_help(self.mode)
 
     def gettext(self):
         """Returns the current text in the control including the cursor
