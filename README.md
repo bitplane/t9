@@ -13,20 +13,20 @@ depends on the number of buttons pressed. It's pretty fast, and uses
 virtually no RAM or CPU. This is required for embedded systems, so
 enjoy.
 
-The reader consists of 3 classes, a database node (Py9Key), a database
-client (Py9Dict), and an inputparser (Py9Input). As a user you'll only
+The reader consists of 3 classes, a database node (T9Key), a database
+client (T9Dict), and an input parser (T9Input). As a user you'll only
 need to bother with the latter.
 
 See demo.py for a good example (works best in a shell), keys are 0-9,
 UDLR (navigation) and S (select mode). You'll need loads of RAM the first
 time you run it, after it's made the DB it'll need hardly any.
 
-  Language files wanted!
+## Language files wanted!
 
-  EN-GB: Downloaded from the web, derived from gnu aspell (iirc)
-  NL-DU: Thanks to Breght Boschker for submitting these :)
+* 🇬🇧 EN-GB: Downloaded from the web, derived from gnu aspell (iirc)
+* 🇳🇱 NL-DU: Thanks to Breght Boschker for submitting these :)
 
-To make your own dictionary, have a read of makepy9.py.
+To make your own dictionary, have a read of maket9.py.
 Keep your wordlists though - the file format might change in future.
 
 ## 🔗 Links
