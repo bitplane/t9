@@ -23,11 +23,6 @@ def getkey(word):
     return result
 
 
-def str2digits(word):
-    """Convert a word to T9 keypress sequence (alias for getkey)."""
-    return getkey(word)
-
-
 def get_wordlists_dir():
     """Get the path to the wordlists directory."""
     return Path(__file__).parent / "wordlists"
