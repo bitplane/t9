@@ -108,6 +108,6 @@ class Py9Key:
         (wc,) = struct.unpack("!h", f.read(2))
         self.words = []
         for n in range(0, wc):
-            self.words.append(f.readline().decode("utf-8")[:-1])
+            self.words.append(f.readline().decode("utf-8").rstrip("\n\r"))
 
         logger.debug("loaded node: refs=%s words=%s", self.refs, self.words)

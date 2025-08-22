@@ -28,8 +28,8 @@ class Py9Dict:
         f = open(dict_file, "rb")
         f.seek(8)
         self.wordcount, self.rootpos = struct.unpack("!LL", f.read(8))
-        self.language = f.readline().decode("utf-8")[:-1]
-        self.comment = f.readline().decode("utf-8")[:-1]
+        self.language = f.readline().decode("utf-8").rstrip("\n\r")
+        self.comment = f.readline().decode("utf-8").rstrip("\n\r")
         f.close()
 
     def getwords(self, digits):
