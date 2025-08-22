@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-import py9, time, os.path
+import py9
+import time
+import os.path
 
 try:
     from msvcrt import getche
@@ -12,9 +14,8 @@ except ImportError:
 if not os.path.isfile("wordlists/en-gb.words"):
     print("creating dictionary (1 time only)")
     print("loads of ram required (130mb+)")
-    import makepy9
 
-x = py9.Py9Input("en-gb.dict","any old chunk of text that's worth editing I spose")
+x = py9.Py9Input("en-gb.dict", "any old chunk of text that's worth editing I spose")
 
 i = ""
 print(x.showmode(), "---", x.showkeys())
@@ -25,8 +26,8 @@ while i != "Q":
     i = getche()
     if ord(i) == 255:
         i = raw_input(">")
-    
-    if i < "~" :
+
+    if i < "~":
         i = i.upper()
         x.sendkeys(i)
         print("\n\n\n\n\n\n\n\n\n")
@@ -38,4 +39,3 @@ while i != "Q":
 
 # print the text
 print(x.text())
-
