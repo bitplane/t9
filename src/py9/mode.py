@@ -43,16 +43,3 @@ def get_label(mode):
 def get_help(mode):
     """Get the key help text for a mode."""
     return MODE_KEY_HELP.get(InputMode(mode), "Unknown mode")
-
-
-def next_mode(current_mode):
-    """Get the next mode when SELECT is pressed."""
-    mode_cycle = {
-        InputMode.NAVIGATE: InputMode.TEXT_LOWER,
-        InputMode.EDIT_WORD: InputMode.EDIT_CHAR,
-        InputMode.EDIT_CHAR: InputMode.TEXT_LOWER,
-        InputMode.TEXT_LOWER: InputMode.TEXT_UPPER,
-        InputMode.TEXT_UPPER: InputMode.NUMERIC,
-        InputMode.NUMERIC: InputMode.NAVIGATE,
-    }
-    return mode_cycle.get(InputMode(current_mode), InputMode.NAVIGATE)

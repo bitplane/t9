@@ -5,7 +5,7 @@ import logging
 
 from .constants import ALLKEYS
 from .dict import Py9Dict
-from .mode import get_label, get_help
+from .mode import get_label, get_help, InputMode
 from .utils import getkey
 
 logger = logging.getLogger(__name__)
@@ -23,12 +23,12 @@ class Py9Input:
 
         dict_file: dictionary file name
         defaulttxt: text to start with
-        defaultmode: mode to start in (0=Predictive, 3=TXT lower, 4=TXT upper, 5=Numeric)
+        defaultmode: mode to start in (NAVIGATE=Predictive, TEXT_LOWER, TEXT_UPPER, NUMERIC)
         keydelay: key timeout in TXT mode
         numeric: NOT IMPLEMENTED YET
         """
         self.dict = Py9Dict(dict_file)  # dict for lookups
-        self.mode = defaultmode  # 0=navigate,1=edit word, 2=edit chars,3=lcase txt, 4=ucase txt,5=numbers
+        self.mode = defaultmode  # InputMode: NAVIGATE, EDIT_WORD, EDIT_CHAR, TEXT_LOWER, TEXT_UPPER, NUMERIC
         self.pos = 0  # cursor position (edit chars)
         self.keys = ""  # keys typed (edit word)
         self.word = ""  # word displayed (edit word/chars)
@@ -56,22 +56,22 @@ class Py9Input:
         """Get current text including cursor for display.
         For raw text use .text()
         """
-        if self.mode == 0:
+        if self.mode == InputMode.NAVIGATE:
             return self.textbefore + "|" + self.textafter
-        elif self.mode == 1:
+        elif self.mode == InputMode.EDIT_WORD:
             return self.textbefore + "[" + self.word + "]" + self.textafter
-        elif self.mode == 2:
+        elif self.mode == InputMode.EDIT_CHAR:
             return self.textbefore + '"' + self.posword() + '"?' + self.textafter
-        elif self.mode == 3:
+        elif self.mode == InputMode.TEXT_LOWER:
             return self.textbefore + "()" + self.textafter
-        elif self.mode == 4:
+        elif self.mode == InputMode.TEXT_UPPER:
             return self.textbefore + "[]" + self.textafter
-        elif self.mode == 5:
+        elif self.mode == InputMode.NUMERIC:
             return self.textbefore + "#" + self.textafter
 
     def text(self):
         """Get text buffer without cursor."""
-        if self.mode == 2 or self.mode == 1:
+        if self.mode == InputMode.EDIT_CHAR or self.mode == InputMode.EDIT_WORD:
             return self.textbefore + self.word + self.textafter
         else:
             return self.textbefore + self.textafter
@@ -83,7 +83,7 @@ class Py9Input:
     def setword(self):
         """Change current word to first valid match."""
         if len(self.keys) == 0:
-            self.mode = 0
+            self.mode = InputMode.NAVIGATE
             return
 
         self.pos = 0
@@ -96,15 +96,15 @@ class Py9Input:
             if wl == kl:
                 # same length
                 self.word = self.words[0]
-                self.mode = 1
+                self.mode = InputMode.EDIT_WORD
             elif wl > kl:
                 # long
                 self.word = self.words[0][0:kl]
-                self.mode = 2
+                self.mode = InputMode.EDIT_CHAR
             else:
                 # short
                 self.word = self.words[0] + "." * (kl - wl)
-                self.mode = 2
+                self.mode = InputMode.EDIT_CHAR
 
     def nextword(self):
         """In edit mode 1, move to next word if possible."""
@@ -112,10 +112,10 @@ class Py9Input:
             # enter manual edit if we run out of words
             i = self.words.index(self.word)
             if i == len(self.words) - 1:
-                self.mode = 2
+                self.mode = InputMode.EDIT_CHAR
                 self.pos = 0
             else:
-                self.mode = 1
+                self.mode = InputMode.EDIT_WORD
                 self.word = self.words[i + 1]
         else:
             # the word was not found
@@ -195,11 +195,11 @@ class Py9Input:
             S: back to navigation
         """
         for key in keys:
-            if self.mode == 0:
+            if self.mode == InputMode.NAVIGATE:
                 # navigate mode
                 if key in "123456789":
                     # starting a new word - edit mode
-                    self.mode = 1
+                    self.mode = InputMode.EDIT_WORD
                     self.keys = key
                     self.words = self.dict.getwords(key)
                     self.setword()
@@ -216,18 +216,18 @@ class Py9Input:
                         self.textbefore = self.textbefore[:-1]
                     else:
                         # edit word
-                        self.mode = 1
+                        self.mode = InputMode.EDIT_WORD
                         # move in to edit buffer
                         self.word = self.textbefore.split(" ")[-1]
                         self.textbefore = self.textbefore[0 : self.textbefore.rfind(" ") + 1]
                         if self.word == "":
-                            self.mode = 0
+                            self.mode = InputMode.NAVIGATE
                         else:
                             self.keys = getkey(self.word)
                             self.words = self.dict.getwords(self.keys)
 
                 elif key == "S":
-                    self.mode = 3
+                    self.mode = InputMode.TEXT_LOWER
 
                 elif key in "UL":
                     if self.textbefore == "":
@@ -239,7 +239,7 @@ class Py9Input:
                         self.textbefore = self.textbefore[:-1]
                     else:
                         # edit word
-                        self.mode = 1
+                        self.mode = InputMode.EDIT_WORD
                         # move to edit buffer
                         t = self.textbefore.split(" ")
                         self.word = t[-1]
@@ -257,7 +257,7 @@ class Py9Input:
                         self.textafter = self.textafter[1:]
                     else:
                         # edit word
-                        self.mode = 1
+                        self.mode = InputMode.EDIT_WORD
                         # move to edit buffer
                         t = self.textafter.split(" ")
                         self.word = t[0]
@@ -265,7 +265,7 @@ class Py9Input:
                         self.keys = getkey(self.word)
                         self.words = self.dict.getwords(self.keys)
 
-            elif self.mode < 3:
+            elif self.mode < InputMode.TEXT_LOWER:
                 # mode 1,2
                 if key == "D":
                     # down key = delete 1 char
@@ -273,7 +273,7 @@ class Py9Input:
                     # reset text
                     self.setword()
 
-                if self.mode == 1:
+                if self.mode == InputMode.EDIT_WORD:
                     # edit mode 1 - edit word
                     # space/right = accept.
                     if key in "123456789":
@@ -288,7 +288,7 @@ class Py9Input:
                             self.dict.addword(self.word)
 
                         # return to navigate mode.
-                        self.mode = 0
+                        self.mode = InputMode.NAVIGATE
                         self.textbefore += self.word
                         if key == "0":
                             self.textbefore += " "
@@ -300,7 +300,7 @@ class Py9Input:
                             self.dict.addword(self.word)
 
                         # return to navigate mode.
-                        self.mode = 0
+                        self.mode = InputMode.NAVIGATE
                         self.textafter = self.word + self.textafter
                     elif key == "U":
                         # up is navigate to next word
@@ -321,7 +321,7 @@ class Py9Input:
                                 self.dict.addword(self.word)
 
                             # return to navigate mode.
-                            self.mode = 0
+                            self.mode = InputMode.NAVIGATE
                             self.textbefore += self.word + " "
                         else:
                             # reset the text.
@@ -351,12 +351,12 @@ class Py9Input:
                                     self.dict.addword(self.word)
 
                                 # return to navigate mode.
-                                self.mode = 0
+                                self.mode = InputMode.NAVIGATE
                                 self.textbefore += self.word
                             else:
                                 self.pos += 1
 
-            elif self.mode < 5:
+            elif self.mode < InputMode.NUMERIC:
                 if key in "123456789":
                     # text entry mode 3 (boring way)
                     if self.lastkeytime + self.keydelay > time.perf_counter() and key == self.lastkeypress:
@@ -370,7 +370,7 @@ class Py9Input:
                             else:
                                 c = ALLKEYS[int(key)][i + 1]
                             print(self.mode)
-                            if self.mode == 3:
+                            if self.mode == InputMode.TEXT_LOWER:
                                 # lower case in mode 4
                                 c = c.lower()
 
@@ -379,7 +379,7 @@ class Py9Input:
                     else:
                         # new char
                         c = ALLKEYS[int(key)][0]
-                        if self.mode == 3:
+                        if self.mode == InputMode.TEXT_LOWER:
                             # lower case in mode 4
                             c = c.lower()
                         self.textbefore += c
@@ -407,7 +407,7 @@ class Py9Input:
                 elif key == "S":
                     self.mode += 1
 
-            elif self.mode == 5:
+            elif self.mode == InputMode.NUMERIC:
                 # number entry mode
                 if key in "0123456789":
                     self.textbefore += key
@@ -424,4 +424,4 @@ class Py9Input:
                         self.textbefore = self.textbefore + self.textafter[0]
                         self.textafter = self.textafter[1:]
                 elif key == "S":
-                    self.mode = 0
+                    self.mode = InputMode.NAVIGATE
