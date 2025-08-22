@@ -1,26 +1,120 @@
 #!/usr/bin/env python
 """T9 demo application."""
 
-import time
+import os
+import sys
 from pathlib import Path
 
 from .input import Py9Input
-from .utils import get_wordlists_dir
+from .utils import get_wordlists_dir, draw_keypad, getkey
+
+
+def clear_screen():
+    """Clear the terminal screen."""
+    os.system("cls" if os.name == "nt" else "clear")
+
+
+def get_input():
+    """Get a single character input, handling different platforms."""
+    try:
+        import termios
+        import tty
+
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setcbreak(fd)
+            char = sys.stdin.read(1)
+
+            # Handle escape sequences (arrow keys)
+            if ord(char) == 27:  # ESC
+                # Read the next two characters for arrow keys
+                seq = sys.stdin.read(2)
+                if seq == "[A":
+                    return "UP"
+                elif seq == "[B":
+                    return "DOWN"
+                elif seq == "[C":
+                    return "RIGHT"
+                elif seq == "[D":
+                    return "LEFT"
+                else:
+                    return char  # Unknown escape sequence
+
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return char
+    except ImportError:
+        # Windows fallback
+        try:
+            import msvcrt
+
+            return msvcrt.getch().decode("utf-8", errors="ignore")
+        except ImportError:
+            # Final fallback - line input
+            return input("> ")
+
+
+def handle_input(char, input_obj):
+    """Handle input character and return True if should exit."""
+    if not char:
+        return False
+
+    # Handle arrow keys
+    if char == "UP":
+        input_obj.sendkeys("U")
+        return False
+    elif char == "DOWN":
+        input_obj.sendkeys("D")
+        return False
+    elif char == "LEFT":
+        input_obj.sendkeys("L")
+        return False
+    elif char == "RIGHT":
+        input_obj.sendkeys("R")
+        return False
+
+    # Handle direct T9 keys
+    if char in "0123456789":
+        input_obj.sendkeys(char)
+        return False
+
+    # Handle special control
+    if ord(char) == 3:  # Ctrl+C
+        return True
+    elif char == "\r" or char == "\n":  # Enter -> Right arrow
+        input_obj.sendkeys("R")
+        return False
+    elif char == "\t":  # Tab -> Mode switch
+        input_obj.sendkeys("S")
+        return False
+    elif char == "\x7f" or char == "\b":  # Backspace/DEL
+        input_obj.sendkeys("D")
+        return False
+    else:
+        # Convert text to T9 sequence
+        t9_sequence = getkey(char)
+        for digit in t9_sequence:
+            input_obj.sendkeys(digit)
+        return False
+
+
+def draw_screen(input_obj):
+    """Draw the complete T9 interface screen."""
+    clear_screen()
+    print("=== PY9 T9 Demo ===")
+    print(f"Mode: {input_obj.showmode()}")
+    print()
+    print("Text:")
+    print(input_obj.gettext())
+    print()
+    draw_keypad()
+    print()
+    print("Controls: 0-9=keys, arrows=navigate, TAB=mode, Ctrl+C=quit")
 
 
 def run_demo(dict_file=None):
     """Run the T9 demo application."""
-    try:
-        from msvcrt import getche
-    except ImportError:
-        try:
-            from getch import getche
-        except ImportError:
-            print("T9 Demo requires getch for keyboard input.")
-            print("On Ubuntu/Debian: apt-get install python3-getch")
-            print("Or install via pip: pip install getch")
-            return 1
-
     # Use provided dictionary file or default
     if dict_file:
         dict_path = Path(dict_file)
@@ -35,34 +129,20 @@ def run_demo(dict_file=None):
 
     x = Py9Input(str(dict_path), "any old chunk of text that's worth editing I suppose")
 
-    i = ""
-    print("=== PY9 T9 Demo ===")
-    print(x.showmode(), "---", x.showkeys())
-    print(x.gettext())
-    print("? [0-9/UDLR/S/Q] >")
+    # Initial screen draw
+    draw_screen(x)
 
-    while i != "Q":
-        time.sleep(0.05)
+    while True:
         try:
-            i = getche()
-        except Exception:
-            i = input(">")
+            char = get_input()
+            if handle_input(char, x):
+                break
+            draw_screen(x)
+        except (KeyboardInterrupt, EOFError):
+            print("\nExiting...")
+            break
 
-        if ord(i) == 255:
-            i = input(">")
-
-        if i < "~":
-            i = i.upper()
-            x.sendkeys(i)
-            print("\n\n\n\n\n\n\n\n\n")
-            print(x.showmode(), "---", x.showkeys())
-            print()
-            print(x.gettext())
-            print()
-            print("? [0-9/UDLR/S/Q]")
-
-    # print the final text
-    print("Final text:", x.text())
+    print("\nFinal text:", x.text())
     return 0
 
 
