@@ -15,7 +15,7 @@ class SaveState(IntEnum):
     NEW = 2  # New node needs full save to file
 
 
-class Py9Key:
+class T9Key:
     """Dictionary node for file-based keypress dictionary storage."""
 
     def __init__(self):

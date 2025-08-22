@@ -4,17 +4,17 @@ import struct
 import os
 import logging
 
-from .key import Py9Key, SaveState
+from .key import T9Key, SaveState
 from .utils import getkey
 
 logger = logging.getLogger(__name__)
 
 
-class Py9Dict:
+class T9Dict:
     """T9 dictionary for word lookups and modifications."""
 
     def __init__(self, dict_file):
-        """Create a Py9 dictionary class and load file header info.
+        """Create a T9 dictionary class and load file header info.
 
         dict_file: path to dictionary file
 
@@ -41,7 +41,7 @@ class Py9Dict:
         - If len(result[0]) < len(digits): lookbehind used
         """
         f = open(self.file, "rb")
-        k = Py9Key()
+        k = T9Key()
         oldlist = []
         p = self.rootpos
         logger.debug("root position: %s", p)
@@ -102,7 +102,7 @@ class Py9Dict:
         f = open(self.file, "rb")
 
         nodes = []
-        nodes.append(Py9Key())
+        nodes.append(T9Key())
         f.seek(self.rootpos)
         nodes[0].loadnode(f)
         p = 0
@@ -114,14 +114,14 @@ class Py9Dict:
             # is it referenced?
             if nodes[p].refs[int(c) - 1] is not None:
                 # load it
-                nodes.append(Py9Key())
+                nodes.append(T9Key())
                 f.seek(nodes[p].refs[int(c) - 1])
                 p += 1
                 nodes[p].loadnode(f)
             else:
                 # create it
                 p += 1
-                nodes.append(Py9Key())
+                nodes.append(T9Key())
                 # node needs a save
                 nodes[p].needsave = SaveState.NEW
 
@@ -208,5 +208,5 @@ class Py9Dict:
         Delete a word from the dictionary.
         Not implemented yet.
         """
-        logger.error("Py9Dict.delword() NOT IMPLEMENTED")
+        logger.error("T9Dict.delword() NOT IMPLEMENTED")
         raise NotImplementedError()

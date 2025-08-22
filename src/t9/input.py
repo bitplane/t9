@@ -4,14 +4,14 @@ import time
 import logging
 
 from .constants import ALLKEYS
-from .dict import Py9Dict
+from .dict import T9Dict
 from .mode import get_label, get_help, InputMode
 from .utils import getkey
 
 logger = logging.getLogger(__name__)
 
 
-class Py9Input:
+class T9Input:
     """T9 input parser that handles keypresses and text manipulation.
 
     Send keypresses with sendkeys(), retrieve display text with gettext(),
@@ -27,7 +27,7 @@ class Py9Input:
         keydelay: key timeout in TXT mode
         numeric: NOT IMPLEMENTED YET
         """
-        self.dict = Py9Dict(dict_file)  # dict for lookups
+        self.dict = T9Dict(dict_file)  # dict for lookups
         self.mode = defaultmode  # InputMode: NAVIGATE, EDIT_WORD, EDIT_CHAR, TEXT_LOWER, TEXT_UPPER, NUMERIC
         self.pos = 0  # cursor position (edit chars)
         self.keys = ""  # keys typed (edit word)

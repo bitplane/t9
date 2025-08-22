@@ -1,8 +1,8 @@
 """Comprehensive tests for dictionary operations targeting all code branches."""
 
 import pytest
-from py9 import makepy9
-from py9.dict import Py9Dict
+from t9 import maket9
+from t9.dict import T9Dict
 
 
 @pytest.fixture
@@ -11,13 +11,13 @@ def test_dict_path(test_data_dir, tmp_path):
     wordlist_path = test_data_dir / "branches.txt"
     dict_path = tmp_path / "test.dict"
 
-    makepy9.makedict(str(wordlist_path), str(dict_path), "Test Language", "Test dictionary for branch coverage")
+    maket9.makedict(str(wordlist_path), str(dict_path), "Test Language", "Test dictionary for branch coverage")
     return dict_path
 
 
 def test_first_key_not_found(test_dict_path):
     """Test case: first letter/key not found (line 62 return)."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # Key "1" maps to punctuation, unlikely to start words in our wordlist
     result = d.getwords("1")
     # Should return empty oldlist since no intermediate words saved
@@ -26,7 +26,7 @@ def test_first_key_not_found(test_dict_path):
 
 def test_exact_match_single_word(test_dict_path):
     """Test case: exact match with single word."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # "go" -> "46", should find exact match
     result = d.getwords("46")
     assert len(result) > 0
@@ -37,7 +37,7 @@ def test_exact_match_single_word(test_dict_path):
 
 def test_lookahead_multiple_matches(test_dict_path):
     """Test case: lookahead with multiple possible words."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # "4" maps to "g", should find "go", "good" as lookaheads
     result = d.getwords("4")
     assert len(result) > 0
@@ -47,7 +47,7 @@ def test_lookahead_multiple_matches(test_dict_path):
 
 def test_lookbehind_intermediate_word_saved(test_dict_path):
     """Test case: lookbehind where intermediate node had words (line 58-60)."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # "228" -> "cat", "22899" -> should fail but return saved "cat"
     # First verify "cat" exists at "228"
     cat_result = d.getwords("228")
@@ -63,7 +63,7 @@ def test_lookbehind_intermediate_word_saved(test_dict_path):
 
 def test_punctuation_handling(test_dict_path):
     """Test case: digits ending in '1' (punctuation) - line 74."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # Add punctuation to trigger line 74 path
     result = d.getwords("21")  # "a" + punctuation
     # Should handle punctuation case
@@ -72,7 +72,7 @@ def test_punctuation_handling(test_dict_path):
 
 def test_no_words_fallback_loop(test_dict_path):
     """Test case: final node has no words, triggers fallback (line 79-91)."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # Try a key sequence that should hit a node with no words
     # but has child nodes, triggering the fallback loop
     result = d.getwords("999")  # "zzz" - very unlikely to exist
@@ -82,7 +82,7 @@ def test_no_words_fallback_loop(test_dict_path):
 
 def test_case_insensitive_matching(test_dict_path):
     """Test case: same word different case."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # Test that lookups work regardless of case
     result_lower = d.getwords("43556")  # "hello"
     result_upper = d.getwords("43556")  # same keystrokes for "HELLO"
@@ -91,7 +91,7 @@ def test_case_insensitive_matching(test_dict_path):
 
 def test_multiple_words_same_keys(test_dict_path):
     """Test case: multiple words map to same key sequence."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # "4663" could map to "good", "home", etc.
     result = d.getwords("4663")
     assert isinstance(result, list)
@@ -102,7 +102,7 @@ def test_multiple_words_same_keys(test_dict_path):
 
 def test_add_new_word(test_dict_path):
     """Test adding a completely new word."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     original_count = d.wordcount
 
     # Add a word that definitely doesn't exist
@@ -118,7 +118,7 @@ def test_add_new_word(test_dict_path):
 
 def test_add_duplicate_word_raises_error(test_dict_path):
     """Test that adding duplicate word raises KeyError."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
 
     # Try to add a word that already exists
     with pytest.raises(KeyError):
@@ -127,7 +127,7 @@ def test_add_duplicate_word_raises_error(test_dict_path):
 
 def test_delete_word_not_implemented(test_dict_path):
     """Test that delete word raises NotImplementedError."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
 
     with pytest.raises(NotImplementedError):
         d.delword("hello")
@@ -135,7 +135,7 @@ def test_delete_word_not_implemented(test_dict_path):
 
 def test_dict_metadata_loading(test_dict_path):
     """Test that dictionary metadata is loaded correctly."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
 
     assert d.language == "Test Language"
     assert d.comment == "Test dictionary for branch coverage"
@@ -153,7 +153,7 @@ def test_dict_file_structure(test_dict_path):
 
 def test_punctuation_ending_with_saved_word(test_dict_path):
     """Test line 75-77: punctuation ending returns oldlist."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # Find a word that exists, then add punctuation
     # "2" -> should save some word, then "21" -> punctuation
     result = d.getwords("21")  # "a" + punctuation
@@ -163,7 +163,7 @@ def test_punctuation_ending_with_saved_word(test_dict_path):
 
 def test_complete_fallback_failure(test_dict_path):
     """Test lines 86-87: fallback loop finds no child nodes."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # Try to create a scenario where we hit a leaf node with no words
     # and no child nodes, causing complete failure
     result = d.getwords("11111")  # All punctuation, very unlikely
@@ -173,7 +173,7 @@ def test_complete_fallback_failure(test_dict_path):
 
 def test_complex_word_addition_nested_nodes(test_dict_path):
     """Test line 142: complex nested node creation in addword."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # Add words that will create complex nested structure
     # This should trigger the deep nested node logic
     d.addword("newword1")
@@ -186,7 +186,7 @@ def test_complex_word_addition_nested_nodes(test_dict_path):
 
 def test_word_addition_node_position_update(test_dict_path):
     """Test lines 164-166: node position update in addword."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     # Add a word that should trigger the position update logic
     # This happens when nodes[p-1].fpos != 0 and needsave == -1
     d.addword("specialword")
@@ -198,7 +198,7 @@ def test_word_addition_node_position_update(test_dict_path):
 
 def test_node_update_vs_no_edit_branches(test_dict_path):
     """Test lines 191-202: node update and no-edit branches."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     original_count = d.wordcount
 
     # Add multiple words to trigger different node save states
@@ -217,7 +217,7 @@ def test_node_update_vs_no_edit_branches(test_dict_path):
 
 def test_save_functionality(test_dict_path):
     """Test that dictionary can be saved and reloaded with added words."""
-    d = Py9Dict(str(test_dict_path))
+    d = T9Dict(str(test_dict_path))
     original_count = d.wordcount
 
     # Add a new word
@@ -226,7 +226,7 @@ def test_save_functionality(test_dict_path):
 
     # Save the dictionary (this should be automatic in addword)
     # Reload dictionary from file to verify persistence
-    d2 = Py9Dict(str(test_dict_path))
+    d2 = T9Dict(str(test_dict_path))
 
     # Verify the added word persists
     assert d2.wordcount == original_count + 1
@@ -245,8 +245,8 @@ def test_punctuation_fallback_behavior(test_data_dir, tmp_path):
     wordlist_path = test_data_dir / "punctuation_lookahead.txt"
     dict_path = tmp_path / "punctuation_test.dict"
 
-    makepy9.makedict(str(wordlist_path), str(dict_path), "Test", "Test")
-    d = Py9Dict(str(dict_path))
+    maket9.makedict(str(wordlist_path), str(dict_path), "Test", "Test")
+    d = T9Dict(str(dict_path))
 
     # Verify the words exist
     assert "test" in d.getwords("8378")  # "test"
@@ -270,8 +270,8 @@ def test_fallback_dead_end_lines_85_86(test_data_dir, tmp_path):
     dead_branch_path = test_data_dir / "dead_branch.txt"
     dict_path = tmp_path / "dead_branch.dict"
 
-    makepy9.makedict(str(dead_branch_path), str(dict_path), "Test", "Test")
-    d = Py9Dict(str(dict_path))
+    maket9.makedict(str(dead_branch_path), str(dict_path), "Test", "Test")
+    d = T9Dict(str(dict_path))
 
     # Try to find a sequence that hits a true dead end
     # This is tricky - might need a very specific dictionary structure

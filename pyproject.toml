@@ -1,6 +1,6 @@
 [project]
-name = "py9"
-description = "py9"
+name = "t9"
+description = "t9"
 version = "0.2.0"
 authors = [
     { name = "Gareth Davidson", email = "gaz@bitplane.net" }
@@ -11,7 +11,7 @@ requires-python = ">=3.9"
 dependencies = []
 
 [project.scripts]
-py9 = "py9.cli:main"
+t9 = "t9.cli:main"
 
 [project.optional-dependencies]
 dev = [

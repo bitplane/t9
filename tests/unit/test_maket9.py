@@ -1,10 +1,10 @@
-"""Tests for dictionary generation (makepy9 module)."""
+"""Tests for dictionary generation (maket9 module)."""
 
 import pytest
 from pathlib import Path
-from py9 import makepy9
-from py9.dict import Py9Dict
-from py9.utils import getkey
+from t9 import maket9
+from t9.dict import T9Dict
+from t9.utils import getkey
 
 
 def get_test_wordlists():
@@ -19,7 +19,7 @@ def test_makedict_creates_file(test_data_dir, tmpdir, wordlist_file):
     wordlist_path = test_data_dir / wordlist_file
     dict_path = tmpdir.join(f"{Path(wordlist_file).stem}.dict")
 
-    makepy9.makedict(str(wordlist_path), str(dict_path), "Test Language", "Test dictionary")
+    maket9.makedict(str(wordlist_path), str(dict_path), "Test Language", "Test dictionary")
 
     assert dict_path.exists()
     assert dict_path.size() > 0
@@ -36,8 +36,8 @@ def test_makedict_all_words_retrievable(test_data_dir, tmp_path, wordlist_file):
         input_words = [line.strip() for line in f if line.strip()]
 
     # Create dictionary
-    makepy9.makedict(str(wordlist_path), str(dict_path), "Test", "Test")
-    d = Py9Dict(str(dict_path))
+    maket9.makedict(str(wordlist_path), str(dict_path), "Test", "Test")
+    d = T9Dict(str(dict_path))
 
     # Verify each word can be retrieved
     for word in input_words:

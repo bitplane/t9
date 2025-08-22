@@ -1,4 +1,4 @@
-# ☎️ py9
+# ☎️  T9
 
 This is a T9 implementation that I wrote a long, long time ago for XBMC
 so chat programs could chat via the remote like I could on my Nokia

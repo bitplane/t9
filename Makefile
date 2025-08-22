@@ -3,7 +3,7 @@
 		pre-commit update-pre-commit
 
 
-PROJECT_NAME := py9
+PROJECT_NAME := t9
 
 
 all: dev coverage  ## builds everything

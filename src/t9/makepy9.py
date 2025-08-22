@@ -13,12 +13,12 @@ File Format...
 """
 
 import struct
-from .key import Py9Key
+from .key import T9Key
 from .utils import getkey
 
 
 def makedict(strIn, strOut, language="Unknown", comment=""):
-    root = Py9Key()
+    root = T9Key()
     count = 0
     f = open(strIn, "rt")
     for line in f:
@@ -31,7 +31,7 @@ def makedict(strIn, strOut, language="Unknown", comment=""):
         r = root
         for c in path:
             if r.refs[int(c) - 1] is None:
-                r.refs[int(c) - 1] = Py9Key()
+                r.refs[int(c) - 1] = T9Key()
             r = r.refs[int(c) - 1]
         # add the word to this position
         r.words.append(line)

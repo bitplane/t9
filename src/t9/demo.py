@@ -5,7 +5,7 @@ import os
 import sys
 from pathlib import Path
 
-from .input import Py9Input
+from .input import T9Input
 from .utils import get_wordlists_dir, draw_keypad, getkey
 
 
@@ -127,7 +127,7 @@ def run_demo(dict_file=None):
         print(f"Generate one with: py9 generate {wordlists_dir}/en-gb.words -o {wordlists_dir}/en-gb.dict")
         return 1
 
-    x = Py9Input(str(dict_path), "any old chunk of text that's worth editing I suppose")
+    x = T9Input(str(dict_path), "any old chunk of text that's worth editing I suppose")
 
     # Initial screen draw
     draw_screen(x)
