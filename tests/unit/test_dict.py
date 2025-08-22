@@ -213,3 +213,53 @@ def test_node_update_vs_no_edit_branches(test_dict_path):
     assert "testa" in d.getwords("83782")
     assert "testb" in d.getwords("83782")
     assert "testc" in d.getwords("83782")
+
+
+def test_save_functionality(test_dict_path):
+    """Test that dictionary can be saved and reloaded with added words."""
+    d = Py9Dict(str(test_dict_path))
+    original_count = d.wordcount
+
+    # Add a new word
+    d.addword("testsave")
+    assert d.wordcount == original_count + 1
+
+    # Save the dictionary (this should be automatic in addword)
+    # Reload dictionary from file to verify persistence
+    d2 = Py9Dict(str(test_dict_path))
+
+    # Verify the added word persists
+    assert d2.wordcount == original_count + 1
+    result = d2.getwords("83787283")  # "testsave"
+    assert "testsave" in result
+
+
+def test_punctuation_handling_with_minimal_dict(test_data_dir, tmp_path):
+    """Test lines 74-76: punctuation ending returns oldlist."""
+    # Create minimal dictionary with just "a"
+    minimal_path = test_data_dir / "minimal.txt"
+    dict_path = tmp_path / "minimal.dict"
+
+    makepy9.makedict(str(minimal_path), str(dict_path), "Minimal", "Just 'a'")
+    d = Py9Dict(str(dict_path))
+
+    # "21" = "a" + punctuation(1)
+    # This should save "a" at position "2", then hit a node with no words at "1"
+    # Since it ends with "1" (punctuation), it should return the saved "a"
+    result = d.getwords("21")
+    assert "a" in result
+
+
+def test_fallback_dead_end_with_impossible_sequence(test_data_dir, tmp_path):
+    """Test lines 85-86: complete fallback failure when no child refs exist."""
+    # Use minimal dictionary and try impossible sequences
+    minimal_path = test_data_dir / "minimal.txt"
+    dict_path = tmp_path / "minimal.dict"
+
+    makepy9.makedict(str(minimal_path), str(dict_path), "Minimal", "Just 'a'")
+    d = Py9Dict(str(dict_path))
+
+    # Try sequences that should hit dead ends
+    # With only "a" (key 2), sequences like "9999" should fail completely
+    result = d.getwords("9999")
+    assert result == []

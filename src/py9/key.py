@@ -2,8 +2,17 @@
 
 import struct
 import logging
+from enum import IntEnum
 
 logger = logging.getLogger(__name__)
+
+
+class SaveState(IntEnum):
+    """Node save state for dictionary file operations."""
+
+    UNCHANGED = -1  # Node doesn't need any file operation
+    UPDATE = 1  # Existing node needs reference update
+    NEW = 2  # New node needs full save to file
 
 
 class Py9Key:
@@ -13,7 +22,7 @@ class Py9Key:
         self.refs = [None, None, None, None, None, None, None, None, None]
         self.words = []
         self.fpos = 0
-        self.needsave = False
+        self.needsave = SaveState.UNCHANGED
         self.last = -1
 
     def save(self, f):

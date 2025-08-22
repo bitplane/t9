@@ -4,7 +4,7 @@ import struct
 import os
 import logging
 
-from .key import Py9Key
+from .key import Py9Key, SaveState
 from .utils import getkey
 
 logger = logging.getLogger(__name__)
@@ -125,24 +125,24 @@ class Py9Dict:
                 p += 1
                 nodes.append(Py9Key())
                 # node needs a save
-                nodes[p].needsave = 2
+                nodes[p].needsave = SaveState.NEW
 
             logger.debug("last node ref: %s", nodes[p - 1].refs[int(key[p - 1]) - 1])
 
             if nodes[p - 1].refs[int(key[p - 1]) - 1] is None:
                 logger.debug("last node was new")
                 # previous node is also new
-                nodes[p - 1].needsave = 2
+                nodes[p - 1].needsave = SaveState.NEW
                 if p - 2 >= 0:
                     if nodes[p - 2].refs[int(key[p - 2]) - 1] is None:
                         logger.debug("nested new node")
-                        nodes[p - 2].needsave = 2
+                        nodes[p - 2].needsave = SaveState.NEW
                     else:
-                        nodes[p - 2].needsave = 1
+                        nodes[p - 2].needsave = SaveState.UPDATE
             else:
                 # previous node is old - update
-                if nodes[p - 1].needsave != 2:
-                    nodes[p - 1].needsave = 1
+                if nodes[p - 1].needsave != SaveState.NEW:
+                    nodes[p - 1].needsave = SaveState.UPDATE
 
         f.close()
 
@@ -158,15 +158,13 @@ class Py9Dict:
 
         # add the word to the list
         nodes[p].words.append(word)
-        nodes[p].needsave = 2
+        nodes[p].needsave = SaveState.NEW
         if nodes[p - 1].fpos != 0:
             nodes[p].last = int(c) - 1
-            if nodes[p - 1].needsave == -1:
-                nodes[p - 1].needsave = 1
 
         # now work from the last digit back saving each one
         for n in range(len(nodes) - 1, -1, -1):
-            if nodes[n].needsave == 2:
+            if nodes[n].needsave == SaveState.NEW:
                 logger.debug("node %s needs save", n)
 
                 # are we moving the root node?
@@ -187,7 +185,7 @@ class Py9Dict:
                 if movert:
                     self.rootpos = nodes[n].fpos
 
-            elif nodes[n].needsave == 1:
+            elif nodes[n].needsave == SaveState.UPDATE:
                 logger.debug("node %s needs update at position %s", n, nodes[n].fpos)
                 f = open(self.file, "r+b")
 
