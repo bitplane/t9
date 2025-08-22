@@ -70,7 +70,6 @@ class Py9Dict:
         k.loadnode(f)
         if len(k.words) == 0:
             # couldn't find word
-            print(digits)
             if digits[-1] == "1":
                 f.close()
                 del k
@@ -209,13 +208,10 @@ class Py9Dict:
         logger.debug("root position: %s", self.rootpos)
         del nodes
 
-    def test(self, word):
-        """Test word lookup (debug method)."""
-        print(self.getwords(getkey(word)))
-
     def delword(self, word):
-        """Delete a word from the dictionary.
+        """
+        Delete a word from the dictionary.
         Not implemented yet.
         """
-        print("Py9Dict.delword() NOT IMPLEMENTED")
-        raise NotImplementedError
+        logger.error("Py9Dict.delword() NOT IMPLEMENTED")
+        raise NotImplementedError()

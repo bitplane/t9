@@ -17,7 +17,8 @@ class Py9Key:
         self.last = -1
 
     def save(self, f):
-        """Save the node and all child nodes to file f.
+        """
+        Save the node and all child nodes to file f.
         Used when creating dictionary file.
         """
         # recurse save children first so self.ref[x].fpos is always set
@@ -47,7 +48,8 @@ class Py9Key:
             f.write(("%s\n" % word).encode("utf-8"))
 
     def savenode(self, f):
-        """Save just this node to the file.
+        """
+        Save just this node to the file.
         Used to add or overwrite a node.
         """
         # get position in file
@@ -79,7 +81,9 @@ class Py9Key:
             f.write(("%s\n" % word).encode("utf-8"))
 
     def loadnode(self, f):
-        """Load a node from an open file object."""
+        """
+        Load a node from an open file object.
+        """
         self.fpos = f.tell()
         # read flags (2 bytes)
         (flags,) = struct.unpack("!h", f.read(2))

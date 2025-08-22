@@ -14,7 +14,9 @@ def run_demo(dict_file=None):
 
 
 def generate_dict(wordlist, output, language="Unknown", comment=""):
-    """Generate a T9 dictionary from a wordlist file."""
+    """
+    Generate a T9 dictionary from a wordlist file.
+    """
     if not Path(wordlist).exists():
         print(f"Wordlist file not found: {wordlist}")
         return 1
@@ -36,7 +38,9 @@ def generate_dict(wordlist, output, language="Unknown", comment=""):
 
 
 def main():
-    """Main CLI entry point."""
+    """
+    Main CLI entry point.
+    """
     parser = argparse.ArgumentParser(description="PY9 T9 predictive text system", prog="py9")
 
     parser.add_argument("--version", action="version", version="%(prog)s 0.2.0")
