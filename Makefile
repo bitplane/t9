@@ -1,5 +1,5 @@
 # the things that don't have output files or run every time
-.PHONY: help all install test dev coverage clean \
+.PHONY: help all install test dev coverage clean dist \
 		pre-commit update-pre-commit
 
 
@@ -18,7 +18,8 @@ test: .venv/.installed-dev  ## run the project's tests
 coverage: .venv/.installed-dev scripts/coverage.sh  ## build the html coverage report
 	scripts/coverage.sh $(PROJECT_NAME)
 
-docs: .docs/index.html ## build the documentation
+docs: scripts/docs.sh README.md docs/index.md ## build and push the docs to blog site
+	scripts/docs.sh
 
 clean:  ## delete caches and the venv
 	scripts/clean.sh
