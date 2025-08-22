@@ -25,7 +25,7 @@ while i != "Q":
     time.sleep(0.05)
     i = getche()
     if ord(i) == 255:
-        i = raw_input(">")
+        i = input(">")
 
     if i < "~":
         i = i.upper()
