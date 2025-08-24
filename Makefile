@@ -1,6 +1,6 @@
 # the things that don't have output files or run every time
 .PHONY: help all install test dev coverage clean dist \
-		pre-commit update-pre-commit
+		pre-commit update-pre-commit docs
 
 
 PROJECT_NAME := t9
