@@ -24,8 +24,8 @@ need to bother with the latter.
 * 🇺🇸 en-US: From the system american-english wordlist
 * 🇳🇱 nl-NL: Thanks to Breght Boschker for submitting these :)
 
-To make your own dictionary, have a read of maket9.py.
-Keep your wordlists though - the file format might change in future.
+To create your own wordlist, run the scripts in the corpus dir and send me a
+pull request.
 
 ## ⚖️ license
 
@@ -35,5 +35,6 @@ Keep your wordlists though - the file format might change in future.
 
 * [🏠 home](https://bitplane.net/dev/python/t9)
   * [📖 pydoc](https://bitplane.net/dev/python/t9/pydoc)
+  * [📖 wordlist](https://bitplane.net/dev/python/t9/wordlist)
 * [😺 github](https://github.com/bitplane/t9)
 * [🐍 pypi](https://pypi.org/project/t9)
