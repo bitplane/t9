@@ -4,6 +4,8 @@ import argparse
 import sys
 from pathlib import Path
 
+from importlib.metadata import version
+
 from . import maket9
 from .demo import run_demo as demo_function
 
@@ -43,7 +45,8 @@ def main():
     """
     parser = argparse.ArgumentParser(description="PY9 T9 predictive text system", prog="py9")
 
-    parser.add_argument("--version", action="version", version="%(prog)s 0.2.0")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {version('t9')}")
+    parser.add_argument("--locale", help="Locale to use (e.g., en-GB, en-US)")
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
@@ -57,25 +60,25 @@ def main():
     # Demo command
     demo_parser = subparsers.add_parser("demo", help="Run T9 demo application")
     demo_parser.add_argument("dictionary", nargs="?", help="Path to dictionary file (optional)")
-    demo_parser.add_argument("--locale", help="Locale to use (e.g., en-GB, en-US)")
 
     args = parser.parse_args()
+
+    # Parse locale if provided
+    language = region = None
+    if args.locale:
+        if "-" in args.locale:
+            language, region = args.locale.split("-", 1)
+        else:
+            language = args.locale
 
     # If no command specified, run demo by default
     if args.command is None:
         print("No command specified, running demo...")
-        return run_demo()
+        return run_demo(None, language, region)
 
     if args.command in ("generate", "gen"):
         return generate_dict(args.wordlist, args.output, args.language, args.comment)
     elif args.command == "demo":
-        # Parse locale if provided
-        language = region = None
-        if args.locale:
-            if "-" in args.locale:
-                language, region = args.locale.split("-", 1)
-            else:
-                language = args.locale
         return run_demo(args.dictionary, language, region)
 
     return 0
