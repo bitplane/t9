@@ -7,6 +7,8 @@ from pathlib import Path
 
 from .input import T9Input
 from .utils import get_wordlists_dir, draw_keypad, getkey
+from .mode import get_label
+from .constants import Key
 
 
 def clear_screen():
@@ -62,16 +64,16 @@ def handle_input(char, input_obj):
 
     # Handle arrow keys
     if char == "UP":
-        input_obj.sendkeys("U")
+        input_obj.sendkeys(Key.UP.value)
         return False
     elif char == "DOWN":
-        input_obj.sendkeys("D")
+        input_obj.sendkeys(Key.DOWN.value)
         return False
     elif char == "LEFT":
-        input_obj.sendkeys("L")
+        input_obj.sendkeys(Key.LEFT.value)
         return False
     elif char == "RIGHT":
-        input_obj.sendkeys("R")
+        input_obj.sendkeys(Key.RIGHT.value)
         return False
 
     # Handle direct T9 keys
@@ -83,13 +85,13 @@ def handle_input(char, input_obj):
     if ord(char) == 3:  # Ctrl+C
         return True
     elif char == "\r" or char == "\n":  # Enter -> Right arrow
-        input_obj.sendkeys("R")
+        input_obj.sendkeys(Key.RIGHT.value)
         return False
     elif char == "\t":  # Tab -> Mode switch
-        input_obj.sendkeys("S")
+        input_obj.sendkeys(Key.SELECT.value)
         return False
     elif char == "\x7f" or char == "\b":  # Backspace/DEL
-        input_obj.sendkeys("D")
+        input_obj.sendkeys(Key.DOWN.value)
         return False
     else:
         # Convert text to T9 sequence
@@ -103,7 +105,7 @@ def draw_screen(input_obj):
     """Draw the complete T9 interface screen."""
     clear_screen()
     print("=== PY9 T9 Demo ===")
-    print(f"Mode: {input_obj.showmode()}")
+    print(f"Mode: {get_label(input_obj.mode)}")
     print()
     print("Text:")
     print(input_obj.gettext())

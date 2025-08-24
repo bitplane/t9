@@ -29,6 +29,10 @@ time you run it, after it's made the DB it'll need hardly any.
 To make your own dictionary, have a read of maket9.py.
 Keep your wordlists though - the file format might change in future.
 
+## ⚖️ license
+
+[WTFPL](https://bitplane.net/dev/python/t9/LICENSE)
+
 ## 🔗 Links
 
 * [🏠 home](https://bitplane.net/dev/python/t9)

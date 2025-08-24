@@ -1,6 +1,6 @@
 """Constants for PY9 T9 text input system."""
 
-from enum import IntEnum
+from enum import Enum
 
 # Key to letter mapping for T9 input
 # Index 0 = key 0, index 1 = key 1, etc.
@@ -19,21 +19,21 @@ ALLKEYS = [
 ]
 
 
-class Key(IntEnum):
-    """T9 input keys."""
+class Key(Enum):
+    """T9 input keys - string values match the actual key characters used."""
 
-    KEY_0 = 0
-    KEY_1 = 1
-    KEY_2 = 2
-    KEY_3 = 3
-    KEY_4 = 4
-    KEY_5 = 5
-    KEY_6 = 6
-    KEY_7 = 7
-    KEY_8 = 8
-    KEY_9 = 9
-    MODE = 10  # Mode switch (was S)
-    UP = 11  # Up/Previous word (was U)
-    DOWN = 12  # Down/Delete/Backspace (was D)
-    LEFT = 13  # Left/Back (was L)
-    RIGHT = 14  # Right/Forward (was R)
+    NUM_0 = "0"
+    NUM_1 = "1"
+    NUM_2 = "2"
+    NUM_3 = "3"
+    NUM_4 = "4"
+    NUM_5 = "5"
+    NUM_6 = "6"
+    NUM_7 = "7"
+    NUM_8 = "8"
+    NUM_9 = "9"
+    SELECT = "S"  # Mode switch/Select
+    UP = "U"  # Up/Previous word
+    DOWN = "D"  # Down/Delete/Backspace
+    LEFT = "L"  # Left/Back
+    RIGHT = "R"  # Right/Forward
