@@ -1,5 +1,6 @@
 """Utility functions for PY9 T9 text input system."""
 
+import gzip
 from pathlib import Path
 from .constants import ALLKEYS
 
@@ -21,6 +22,31 @@ def getkey(word):
 
         result += digit
     return result
+
+
+def read_wordlist(filename):
+    """Read lines from a wordlist file, handling both plain and gzipped files.
+
+    Yields stripped non-empty lines from the file.
+
+    Args:
+        filename: Path to the wordlist file (.txt or .txt.gz)
+
+    Yields:
+        str: Each non-empty line from the file, stripped of whitespace
+    """
+    if str(filename).endswith(".gz"):
+        with gzip.open(filename, "rt", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    yield line
+    else:
+        with open(filename, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    yield line
 
 
 def get_wordlists_dir():

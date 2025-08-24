@@ -4,7 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from . import makepy9
+from . import maket9
 from .demo import run_demo as demo_function
 
 
@@ -28,7 +28,7 @@ def generate_dict(wordlist, output, language="Unknown", comment=""):
 
     try:
         # Call the generation function
-        makepy9.makedict(wordlist, output, language, comment)
+        maket9.makedict(wordlist, output, language, comment)
         print(f"Dictionary successfully created: {output}")
         return 0
 

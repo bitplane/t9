@@ -23,8 +23,8 @@ time you run it, after it's made the DB it'll need hardly any.
 
 ## Language files wanted!
 
-* 🇬🇧 EN-GB: Downloaded from the web, derived from gnu aspell (iirc)
-* 🇳🇱 NL-DU: Thanks to Breght Boschker for submitting these :)
+* 🇬🇧 en-GB: Downloaded from the web, derived from gnu aspell (iirc)
+* 🇳🇱 nl-NL Thanks to Breght Boschker for submitting these :)
 
 To make your own dictionary, have a read of maket9.py.
 Keep your wordlists though - the file format might change in future.

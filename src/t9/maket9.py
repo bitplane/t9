@@ -13,29 +13,23 @@ File Format...
 
 import struct
 from .key import T9Key
-from .utils import getkey
+from .utils import getkey, read_wordlist
 
 
 def makedict(strIn, strOut, language="Unknown", comment=""):
     root = T9Key()
     count = 0
-    f = open(strIn, "rt")
-    for line in f:
+
+    for word in read_wordlist(strIn):
         count += 1
-        line = line.rstrip("\n\r")
-        if not line:  # Skip empty lines
-            count -= 1
-            continue
-        path = getkey(line)
+        path = getkey(word)
         r = root
         for c in path:
             if r.refs[int(c) - 1] is None:
                 r.refs[int(c) - 1] = T9Key()
             r = r.refs[int(c) - 1]
         # add the word to this position
-        r.words.append(line)
-
-    f.close()
+        r.words.append(word)
 
     f = open(strOut, "wb")
     f.write(b"PY9DICT:" + struct.pack("!LL", 0, 0))
