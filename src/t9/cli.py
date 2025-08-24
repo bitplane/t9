@@ -8,9 +8,9 @@ from . import maket9
 from .demo import run_demo as demo_function
 
 
-def run_demo(dict_file=None):
+def run_demo(dict_file=None, language=None, region=None):
     """Run the T9 demo application."""
-    return demo_function(dict_file)
+    return demo_function(dict_file, language, region)
 
 
 def generate_dict(wordlist, output, language="Unknown", comment=""):
@@ -57,6 +57,7 @@ def main():
     # Demo command
     demo_parser = subparsers.add_parser("demo", help="Run T9 demo application")
     demo_parser.add_argument("dictionary", nargs="?", help="Path to dictionary file (optional)")
+    demo_parser.add_argument("--locale", help="Locale to use (e.g., en-GB, en-US)")
 
     args = parser.parse_args()
 
@@ -68,7 +69,14 @@ def main():
     if args.command in ("generate", "gen"):
         return generate_dict(args.wordlist, args.output, args.language, args.comment)
     elif args.command == "demo":
-        return run_demo(args.dictionary)
+        # Parse locale if provided
+        language = region = None
+        if args.locale:
+            if "-" in args.locale:
+                language, region = args.locale.split("-", 1)
+            else:
+                language = args.locale
+        return run_demo(args.dictionary, language, region)
 
     return 0
 

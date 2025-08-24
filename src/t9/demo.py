@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 from .input import T9Input
-from .utils import get_wordlists_dir, draw_keypad, getkey
+from .utils import get_wordlists_dir, draw_keypad, getkey, find_or_generate_dict, get_locale
 from .mode import get_label
 from .constants import Key
 
@@ -115,19 +115,31 @@ def draw_screen(input_obj):
     print("Controls: 0-9=keys, arrows=navigate, TAB=mode, Ctrl+C=quit")
 
 
-def run_demo(dict_file=None):
+def run_demo(dict_file=None, language=None, region=None):
     """Run the T9 demo application."""
-    # Use provided dictionary file or default
+    # Use provided dictionary file or find/generate one
     if dict_file:
         dict_path = Path(dict_file)
+        if not dict_path.exists():
+            print(f"Dictionary file not found: {dict_path}")
+            return 1
     else:
-        dict_path = get_wordlists_dir() / "en-gb.dict"
-
-    if not dict_path.exists():
-        print(f"Dictionary file not found: {dict_path}")
-        wordlists_dir = get_wordlists_dir()
-        print(f"Generate one with: py9 generate {wordlists_dir}/en-gb.words -o {wordlists_dir}/en-gb.dict")
-        return 1
+        dict_path = find_or_generate_dict(language, region)
+        if not dict_path:
+            # Show helpful error message
+            detected_lang, detected_region = get_locale()
+            print("Could not find or generate dictionary.")
+            print(f"Detected locale: {detected_lang}-{detected_region}" if detected_lang else "No locale detected")
+            print("\nTried:")
+            print("1. Cache directory for generated dictionaries")
+            print("2. Package wordlists (en-GB, en-US, nl-NL)")
+            print("3. System wordlist (/usr/share/dict/words)")
+            print("\nOptions:")
+            print("- Specify a dictionary file: py9 demo /path/to/dict.dict")
+            print("- Specify locale: py9 demo --locale en-GB")
+            wordlists_dir = get_wordlists_dir()
+            print(f"- Generate from wordlist: py9 generate {wordlists_dir}/en-GB.words.gz -o dict.dict")
+            return 1
 
     x = T9Input(str(dict_path), "any old chunk of text that's worth editing I suppose")
 
