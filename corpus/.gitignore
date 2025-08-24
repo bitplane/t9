@@ -1,0 +1,5 @@
+corpus-data
+lifecap-scraper-reddit
+*.txt
+*.words
+all-comments.md
