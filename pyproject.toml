@@ -8,7 +8,9 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.9"
 
-dependencies = []
+dependencies = [
+    "reddit-export"
+]
 
 [project.scripts]
 t9 = "t9.cli:main"

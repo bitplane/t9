@@ -144,9 +144,9 @@ class T9Dict:
 
         f.close()
 
-        # let's not add dupes
+        # let's not add exact duplicates (but allow case variants)
         for q in nodes[p].words:
-            if q.lower() == word.lower():
+            if q == word:
                 del nodes
                 raise KeyError("Word '" + word + "' is already in dictionary '" + self.file + "' at position " + key)
 

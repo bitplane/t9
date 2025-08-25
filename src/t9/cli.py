@@ -8,6 +8,7 @@ from importlib.metadata import version
 
 from . import maket9
 from .demo import run_demo as demo_function
+from .corpus.cli import add_corpus_commands
 
 
 def run_demo(dict_file=None, language=None, region=None):
@@ -61,6 +62,9 @@ def main():
     demo_parser = subparsers.add_parser("demo", help="Run T9 demo application")
     demo_parser.add_argument("dictionary", nargs="?", help="Path to dictionary file (optional)")
 
+    # Corpus commands
+    add_corpus_commands(subparsers)
+
     args = parser.parse_args()
 
     # Parse locale if provided
@@ -80,6 +84,13 @@ def main():
         return generate_dict(args.wordlist, args.output, args.language, args.comment)
     elif args.command == "demo":
         return run_demo(args.dictionary, language, region)
+    elif args.command == "corpus":
+        # Handle corpus subcommands
+        if hasattr(args, "func"):
+            return args.func(args)
+        else:
+            print("No corpus subcommand specified. Use 'py9 corpus -h' for help.")
+            return 1
 
     return 0
 
