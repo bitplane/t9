@@ -1,8 +1,13 @@
+---
+features: ["asciinema"]
+---
 # ☎️  T9
 
 This is a T9 implementation that I wrote a long, long time ago for XBMC
 so chat programs could chat via the remote like I could on my Nokia
 phone.
+
+![cast](https://bitplane.net/dev/python/t9/t9.cast.png)
 
 The language files are huge, but after generation they're organised so
 the number of reads depends on the number of buttons pressed. It's
